@@ -84,7 +84,7 @@
 
         /* Seat Class Styles */
         .seat.regular {
-            background-color: #228B22;
+            background-color: #4472c2;
             /* ForestGreen for regular */
         }
 
@@ -472,7 +472,7 @@
 </head>
 
 <body>
-    <h1>OPERA KOMEDI SAMADI Ticket Booking</h1>
+    <h1>WORSHIP NIGHT Ticket Booking</h1>
     <!-- Seat map container -->
     <div id="seat-map-container">
         <div id="seat-map">
@@ -484,24 +484,8 @@
     <!-- Legend -->
     <div class="legend">
         <div class="legend-item">
-            <div class="seat imam"></div>
-            <span>Imam - Free</span>
-        </div>
-        <div class="legend-item">
-            <div class="seat vvip"></div>
-            <span>Platinum - Rp. 2,000,000</span>
-        </div>
-        <div class="legend-item">
-            <div class="seat special"></div>
-            <span>Gold - Rp. 1,000,000</span>
-        </div>
-        <div class="legend-item">
             <div class="seat regular"></div>
-            <span>Silver - Rp. 750,000</span>
-        </div>
-        <div class="legend-item">
-            <div class="seat backseat"></div>
-            <span>Bronze - Rp. 500,000</span>
+            <span>Silver - Rp. 75,000</span>
         </div>
     </div>
     <!-- Confirmation message moved above the button -->
@@ -552,8 +536,8 @@
         // JavaScript Code
         let userLoggedIn = false; // Track login state
 
-        const baseURL = 'http://188.166.223.224:5000';
-        // const baseURL = 'http://127.0.0.1:5000';
+        // const baseURL = 'http://188.166.223.224:5000';
+        const baseURL = 'http://127.0.0.1:5000';
 
         // JavaScript Code
         const seatMap = [
@@ -590,7 +574,7 @@
         const seatPrices = {
             'vvip': 2000000,
             'special': 1000000,
-            'regular': 750000,
+            'regular': 75000,
             'backseat': 500000,
             'imam': 0
         };
@@ -613,6 +597,8 @@
         const lastRow = ['R', 'Q']
         const backseatRows = specialRows;
 
+        const allrowsame = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'R', 'Q'];
+
         // Reverse the seat map to reflect the new orientation
         const reversedSeatMap = seatMap.slice().reverse();
 
@@ -625,32 +611,33 @@
                 const seatNumber = parseInt(seat.match(/\d+/)[0]);
                 let seatClass = 'regular'; // Default class
 
-                if (imamRows.includes(rowLetter)) {
-                    if (seatNumber >= 8 && seatNumber <= 20) {
-                        seatClass = 'imam';
-                    } else {
-                        seatClass = 'regular';
-                    }
-                } else if (vvipRows.includes(rowLetter)) {
-                    if (seatNumber >= 8 && seatNumber <= 20) {
-                        seatClass = 'vvip';
-                    } else {
-                        seatClass = 'regular';
-                    }
-                } else if (specialRows.includes(rowLetter)) {
-                    if (seatNumber >= 8 && seatNumber <= 20) {
-                        seatClass = 'special';
-                    } else {
-                        seatClass = 'backseat';
-                    }
-                } else if (lastRow.includes(rowLetter)) {
-                    if (seatNumber >= 1 && seatNumber <= 13) {
-                        seatClass = 'special';
-                    } else {
-                        seatClass = 'backseat';
-                    }
-                }
-
+                // if (imamRows.includes(rowLetter)) {
+                //     if (seatNumber >= 8 && seatNumber <= 20) {
+                //         seatClass = 'imam';
+                //     } else {
+                //         seatClass = 'regular';
+                //     }
+                // } else if (vvipRows.includes(rowLetter)) {
+                //     if (seatNumber >= 8 && seatNumber <= 20) {
+                //         seatClass = 'vvip';
+                //     } else {
+                //         seatClass = 'regular';
+                //     }
+                // } else if (specialRows.includes(rowLetter)) {
+                //     if (seatNumber >= 8 && seatNumber <= 20) {
+                //         seatClass = 'special';
+                //     } else {
+                //         seatClass = 'backseat';
+                //     }
+                // } else if (lastRow.includes(rowLetter)) {
+                //     if (seatNumber >= 1 && seatNumber <= 13) {
+                //         seatClass = 'special';
+                //     } else {
+                //         seatClass = 'backseat';
+                //     }
+                // }
+                
+                seatClass = 'regular';
                 return { label: seat, class: seatClass };
             });
         });
@@ -1206,7 +1193,7 @@
             const colorMap = {
                 'vvip': 'MERAH',    // Red
                 'special': 'UNGU',  // Purple
-                'regular': 'HIJAU', // Green
+                'regular': 'BIRU', // Green
                 'backseat': 'KUNING', // Yellow
                 'imam': 'ORANGE'
             };

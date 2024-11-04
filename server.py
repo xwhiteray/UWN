@@ -18,8 +18,8 @@ import random
 
 app = Flask(__name__)
 # CORS(app, origins='http://188.166.223.224')  # Adjust the port if necessary
-CORS(app, origins='https://157.245.59.135')
-# CORS(app, resources={r"/*": {"origins": "*"}})
+# CORS(app, origins='https://157.245.59.135')
+CORS(app, resources={r"/*": {"origins": "*"}})
 socketio = SocketIO(app, cors_allowed_origins="*")  # Allow CORS for all origins
 
 app.secret_key = 'helloworld' 
@@ -39,7 +39,7 @@ credentials = ServiceAccountCredentials.from_json_keyfile_name(SERVICE_ACCOUNT_F
 gc = gspread.authorize(credentials)
 
 # Open the Google Sheet
-SHEET_NAME = 'DATA KURSI OPERA SAMADI'  # Replace with your Google Sheet name
+SHEET_NAME = 'DATA KURSI WORSHIP NIGHT'  # Replace with your Google Sheet name
 
 
 try:
@@ -641,7 +641,7 @@ def generate_ticket_image(id, qr_data, buyer_name, seller_name, seat_label):
 
         # Construct absolute paths
         image_path = os.path.join(script_dir, 'ticketyellow.png')
-        font_path = os.path.join(script_dir, 'BebasNeue-Regular.ttf')
+        font_path = os.path.join(script_dir, 'Aileron-Light.otf')
         
         
         # Open an existing image
@@ -655,19 +655,19 @@ def generate_ticket_image(id, qr_data, buyer_name, seller_name, seat_label):
         draw = ImageDraw.Draw(image)
         
         # Use a TrueType font
-        font = ImageFont.truetype(font_path, size=35)
+        font = ImageFont.truetype(font_path, size=28)
         
         # Verify image dimensions
         image_width, image_height = image.size
         
-        colors = (205, 167, 99)
+        colors = (0, 0, 0)
         
         # Define maximum text width
         max_text_width = 300  # Adjust this value based on your image
         
         # Starting positions
-        x_position = 178
-        y_positions = [270, 320, 370]
+        x_position = 660
+        y_positions = [50, 85, 120]
         
         # Adjust the order of texts as per your request
         # New order: buyer_name, seller_name, seat_label
@@ -692,20 +692,20 @@ def generate_ticket_image(id, qr_data, buyer_name, seller_name, seat_label):
             version=1,  # Controls the size of the QR code (1-40)
             error_correction=qrcode.constants.ERROR_CORRECT_H,
             box_size=10,  # Controls how many pixels each "box" of the QR code is
-            border=4,    # Controls how many boxes thick the border should be
+            border=1,    # Controls how many boxes thick the border should be
         )
         qr.add_data(qr_data)
         qr.make(fit=True)
         
-        qr_img = qr.make_image(fill_color="black", back_color="white").convert('RGB')
+        qr_img = qr.make_image(fill_color="black", back_color="#f2eddb").convert('RGB')
         
         # Resize QR code image if necessary
-        qr_size = 300  # Desired size of the QR code
+        qr_size = 250  # Desired size of the QR code
         qr_img = qr_img.resize((qr_size, qr_size), Image.ANTIALIAS)
         
         # Position to paste the QR code on the main image
-        qr_x = image_width - qr_size - 190  # Adjust 190 as needed for margin
-        qr_y = image_height - qr_size - 140  # Adjust 140 as needed for margin
+        qr_x = image_width - qr_size - 80  # Adjust 190 as needed for margin
+        qr_y = image_height - qr_size - 130  # Adjust 140 as needed for margin
         
         # Paste the QR code onto the main image
         image.paste(qr_img, (qr_x, qr_y))
@@ -739,41 +739,15 @@ def show_ticket(ticket_id):
     return render_template('ticket.html', image_path=image_path)
 
 users = [
-    {'username': 'herman', 'password': '123123123', 'name' : 'Herman Sentosa', 'phone' : '62811465100'},
-    {'username': 'julius', 'password': '123123123', 'name' : 'Julius Y Tedja', 'phone' : '6282195077463'},
-    {'username': 'anastasia', 'password': '123123123', 'name' : 'Anastasia', 'phone' : '6282293862755'},
-    {'username': 'anton', 'password': '123123123', 'name' : 'Anton Sidjie', 'phone' : '6282322900700'},
-    {'username': 'fredy', 'password': '123123123', 'name' : 'Fredy Horas', 'phone' : '62811441358'},
-    {'username': 'zaldy', 'password': '123123123', 'name' : 'Zaldy Halim', 'phone' : '62811450355'},
-    {'username': 'felix', 'password': '123123123', 'name' : 'Felix Suciadi', 'phone' : '6282188570341'},
-    {'username': 'frans', 'password': '123123123', 'name' : 'Frans Billyanto', 'phone' : '62811418068'},
-    {'username': 'tri', 'password': '123123123', 'name' : 'Tri Saptadi', 'phone' : '628124213728'},
-    {'username': 'adinata', 'password': '123123123', 'name' : 'Adinata', 'phone' : '62895412124564'},
-    {'username': 'yunus', 'password': '123123123', 'name' : 'Yunus', 'phone' : '6281355531088'},
-    {'username': 'pastor', 'password': '123123123', 'name' : 'Pastor Hendrik S', 'phone' : '6281392770132'},
-    {'username': 'alen', 'password': '123123123', 'name' : 'Alen Lokmanjaya', 'phone' : '62811444677'},
-    {'username': 'henry', 'password': '123123123', 'name' : 'Henry Suciadi', 'phone' : '6285299226563'},
-    {'username': 'silvia', 'password': '123123123', 'name' : 'Silvia Ira Wijaya', 'phone' : '62811460369'},
-    {'username': 'elis', 'password': '123123123', 'name' : 'Elis', 'phone' : '6281341081081'},
-    {'username': 'emiliana', 'password': '123123123', 'name' : 'Emiliana', 'phone' : '628114060358'},
-    {'username': 'erny', 'password': '123123123', 'name' : 'Erny Widjaja', 'phone' : '628114533476'},
-    {'username': 'evie', 'password': '123123123', 'name' : 'Evie Sumarga', 'phone' : '628194177993'},
-    {'username': 'liongnardo', 'password': '123123123', 'name' : 'Liongnardo Hugen', 'phone' : '628991533339'},
-    {'username': 'maria', 'password': '123123123', 'name' : 'Maria Magdalena', 'phone' : '6285340527119'},
-    {'username': 'meike', 'password': '123123123', 'name' : 'Meike Salindeho', 'phone' : '6282191380591'},
-    {'username': 'robby', 'password': '123123123', 'name' : 'Robby Gosal', 'phone' : '6281355795795'},
-    {'username': 'dodo', 'password': '123123123', 'name' : 'Dodo Renaldi', 'phone' : '6281355345599'},
-    {'username': 'markus', 'password': '123123123', 'name' : 'Markus T', 'phone' : '6282187381986'},
-    {'username': 'jerus', 'password': '123123123', 'name' : 'Jerus', 'phone' : '6282191162282'},
-    {'username': 'lina', 'password': '123123123', 'name' : 'Meike Liana', 'phone' : '6282291447388'},
-    {'username': 'diana', 'password': '123123123', 'name' : 'Diana Fargo', 'phone' : '6281288776816'},
-    {'username': 'alex', 'password': '123123123', 'name' : 'Alex Chandra', 'phone' : '628114456711'},
-    {'username': 'lily', 'password': '123123123', 'name' : 'Lily Lairan', 'phone' : '62811469258'},
-    {'username': 'julianti', 'password': '123123123', 'name' : 'Julianty R', 'phone' : '6289699569818'},
-    {'username': 'rivan', 'password': '123123123', 'name' : 'Rivan Tandiari', 'phone' : '6281355678777'},
-    {'username': 'aditya', 'password': '123123123', 'name' : 'Aditya Dharmaputra W', 'phone' : '6285320602318'},
-    {'username': 'ing', 'password': '123123123', 'name' : 'Ing Salindeho', 'phone' : '6281334925550'},
-    {'username': 'nofi', 'password': '123123123', 'name' : 'Nofi L', 'phone' : '6285255528789'},
+    {'username': 'aditya', 'password': '123123123', 'name' : 'Aditya Dharmaputra W', 'phone' : '085320602318'},
+    {'username': 'rivan', 'password': '123123123', 'name' : 'Rivan Tandiari', 'phone' : '085320602318'},
+    {'username': 'anastasia', 'password': '123123123', 'name' : 'Anastasia', 'phone' : ''},
+    {'username': 'anton', 'password': '123123123', 'name' : 'Anton Sidjie', 'phone' : ''},
+    {'username': 'fredy', 'password': '123123123', 'name' : 'Fredy Horas', 'phone' : ''},
+    {'username': 'zaldy', 'password': '123123123', 'name' : 'Zaldy Halim', 'phone' : ''},
+    {'username': 'felix', 'password': '123123123', 'name' : 'Felix Suciadi', 'phone' : ''},
+    {'username': 'frans', 'password': '123123123', 'name' : 'Frans Billyanto', 'phone' : ''},
+    {'username': 'tri', 'password': '123123123', 'name' : 'Tri Saptadi', 'phone' : ''},
 ]
 
 @app.route('/login', methods=['POST'])
@@ -1062,5 +1036,5 @@ def verify():
     return render_template('verify.html')
 
 if __name__ == "__main__":
-    # socketio.run(app, host='0.0.0.0', port=5000)
-    socketio.run(app, host='0.0.0.0', port=5000, ssl_context=('/etc/ssl/private/selfsigned.crt', '/etc/ssl/private/selfsigned.key'))
+    socketio.run(app, host='0.0.0.0', port=5000)
+    # socketio.run(app, host='0.0.0.0', port=5000, ssl_context=('/etc/ssl/private/selfsigned.crt', '/etc/ssl/private/selfsigned.key'))

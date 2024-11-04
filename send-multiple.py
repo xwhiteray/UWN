@@ -26,7 +26,7 @@ credentials = ServiceAccountCredentials.from_json_keyfile_name(SERVICE_ACCOUNT_F
 gc = gspread.authorize(credentials)
 
 # Specify the Google Sheet and Worksheet names
-SHEET_NAME = 'DATA KURSI OPERA SAMADI'
+SHEET_NAME = 'DATA KURSI WORSHIP NIGHT'
 WORKSHEET_NAME = 'SENDQUEUE'  # Worksheet containing the send queue
 
 try:
