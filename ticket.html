@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Your Ticket</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            margin-top: 50px;
+        }
+        .ticket-container {
+            display: inline-block;
+            border: 2px solid #ccc;
+            padding: 20px;
+            box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+        }
+        .ticket-container img {
+            max-width: 100%;
+            height: auto;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="ticket-container">
+        <h1>Your Ticket</h1>
+        <!-- Image tag for displaying the ticket -->
+        <img src="{{ image_path }}" alt="Your Ticket Image" />
+        <p>Thank you for your purchase!</p>
+    </div>
+
+</body>
+</html>

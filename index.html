@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Opera Komedi Samadi</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"> <!-- Ensures proper scaling on mobile devices -->
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            background: url('bg.png') no-repeat center center fixed;
+            background-size: cover;
+            font-family: 'Georgia', serif;
+            color: #ffffff;
+        }
+        .overlay {
+            background-color: rgba(0, 0, 0, 0.6);
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+        }
+        .content {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            text-align: center;
+            padding: 0 5%;
+            box-sizing: border-box;
+        }
+        .content h1 {
+            font-size: 8vw; /* Responsive font size */
+            margin-bottom: 5vh; /* Responsive margin */
+            text-shadow: 2px 2px 4px #000000;
+        }
+        .buttons a {
+            display: inline-block;
+            text-decoration: none;
+            color: #ffffff;
+            background-color: #b22222;
+            padding: 2vh 5vw; /* Responsive padding */
+            margin: 2vh 2vw; /* Responsive margin */
+            border-radius: 5px;
+            font-size: 5vw; /* Responsive font size */
+            transition: background-color 0.3s;
+        }
+        .buttons a:hover {
+            background-color: #d32f2f;
+        }
+        /* Media query for larger screens */
+        @media (min-width: 768px) {
+            .content h1 {
+                font-size: 60px;
+                margin-bottom: 50px;
+            }
+            .buttons a {
+                padding: 15px 40px;
+                margin: 20px;
+                font-size: 24px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="overlay"></div>
+    <div class="content">
+        <div class="buttons">
+            <a href="index-theater.html">Buy Ticket</a>
+            <!-- <a href="admin_login.html">Admin</a> -->
+        </div>
+    </div>
+</body>
+</html>

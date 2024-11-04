@@ -1,0 +1,1234 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>OKS Ticket Booking</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"> <!-- For mobile responsiveness -->
+    <style>
+        /* CSS Styles */
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #222;
+            color: #fff;
+            text-align: center;
+            margin: 0;
+            padding-bottom: 100px;
+            /* Prevent content from being hidden behind the fixed button */
+            overflow-x: hidden;
+            /* Hide horizontal scrollbar for the body */
+        }
+
+        h1 {
+            margin-top: 20px;
+            font-size: 2em;
+        }
+
+        #seat-map-container {
+            overflow-x: auto;
+            /* Allows horizontal scrolling */
+            margin: 0 auto;
+            width: 100%;
+            -webkit-overflow-scrolling: touch;
+            /* Smooth scrolling on iOS */
+        }
+
+        #seat-map {
+            display: inline-block;
+            margin: 0 auto;
+            padding: 0 10px;
+        }
+
+        .row {
+            display: flex;
+            align-items: center;
+            margin-bottom: 5px;
+            flex-wrap: nowrap;
+            /* Prevent seats from wrapping to next line */
+        }
+
+        .row-label {
+            width: 20px;
+            font-size: 1em;
+            margin-right: 5px;
+            text-align: right;
+            color: #fff;
+            flex-shrink: 0;
+        }
+
+        .seats {
+            display: flex;
+            flex-wrap: nowrap;
+        }
+
+        .seat {
+            background-color: #444451;
+            height: 30px;
+            width: 30px;
+            margin: 3px;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: 0.3s;
+            flex-shrink: 0;
+            /* Prevent seats from shrinking */
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+            /* Adjust font size as needed */
+            color: #fff;
+            /* Default text color */
+            font-weight: bold;
+        }
+
+        /* Seat Class Styles */
+        .seat.regular {
+            background-color: #228B22;
+            /* ForestGreen for regular */
+        }
+
+        .seat.occupied {
+            background-color: #fff;
+            cursor: not-allowed;
+            color: #000;
+            /* Black text for better contrast */
+        }
+
+        .seat.vvip {
+            background-color: #FF0000;
+            /* Red for VVIP */
+        }
+
+        .seat.special {
+            background-color: #800080;
+            /* Purple for special */
+        }
+
+        .seat.backseat {
+            background-color: #FFD700;
+            /* Gold for backseat */
+            color: #000;
+            /* Black text for better contrast */
+        }
+
+        .seat.imam {
+            background-color: #FFA500;
+            /* Orange for Imam */
+        }
+
+        /* Hover and Selected Styles */
+        /* .seat:not(.occupied):hover {
+            background-color: #6feaf6;
+        } */
+
+        .seat.selected {
+            background-color: #6feaf6;
+        }
+
+        .seat.occupied {
+            background-color: #fff;
+            cursor: not-allowed;
+            color: #000;
+            /* Black text for better contrast */
+        }
+
+        .seat.hidden {
+            visibility: hidden;
+        }
+
+        /* Updated Book Button Styles */
+        #book-button {
+            position: fixed;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            padding: 15px 30px;
+            font-size: 18px;
+            cursor: pointer;
+            background: linear-gradient(135deg, #72edf2 10%, #5151e5 100%);
+            color: #fff;
+            border: none;
+            border-radius: 50px;
+            transition: 0.3s;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+            outline: none;
+            z-index: 1000;
+        }
+
+        #book-button:disabled {
+            background: #555;
+            cursor: not-allowed;
+            box-shadow: none;
+        }
+
+        #book-button:hover:enabled {
+            opacity: 0.9;
+        }
+
+        /* Screen Styles */
+        .screen {
+            background-color: #ccc;
+            height: 40px;
+            margin: 20px auto 0 auto;
+            width: 80%;
+            line-height: 40px;
+            font-weight: bold;
+            color: #000;
+            border-radius: 5px;
+        }
+
+        /* Confirmation Modal Styles */
+        #modal {
+            display: none;
+            /* Hidden by default */
+            position: fixed;
+            z-index: 1001;
+            /* Above other elements */
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow-y: auto;
+            background-color: rgba(0, 0, 0, 0.7);
+            /* Black background with opacity */
+            padding-top: 50px;
+        }
+
+        #modal-content {
+            background-color: #333;
+            margin: auto;
+            padding: 20px;
+            border: 1px solid #888;
+            width: 90%;
+            max-width: 500px;
+            border-radius: 10px;
+            color: #fff;
+        }
+
+        #modal h2 {
+            margin-top: 0;
+            margin-bottom: 20px;
+        }
+
+        #modal form {
+            display: flex;
+            flex-direction: column;
+            align-items: stretch;
+        }
+
+        #modal label {
+            text-align: left;
+            margin-bottom: 5px;
+            font-size: 14px;
+            color: #ccc;
+        }
+
+        #modal input[type="text"],
+        #modal input[type="tel"],
+        #modal select {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 15px;
+            border: none;
+            border-radius: 5px;
+            background-color: #555;
+            color: #fff;
+            font-size: 16px;
+            box-sizing: border-box;
+            outline: none;
+            transition: background-color 0.3s, box-shadow 0.3s;
+        }
+
+        #modal input[type="text"]:focus,
+        #modal input[type="tel"]:focus,
+        #modal select:focus {
+            background-color: #666;
+            box-shadow: 0 0 5px rgba(111, 234, 246, 0.8);
+        }
+
+        #modal input[type="text"]:invalid,
+        #modal input[type="tel"]:invalid,
+        #modal select:invalid {
+            background-color: #600;
+        }
+
+        #modal button {
+            margin: 10px 5px 0 5px;
+            padding: 12px 20px;
+            font-size: 16px;
+            cursor: pointer;
+            background: #6feaf6;
+            color: #000;
+            border: none;
+            border-radius: 5px;
+            transition: 0.3s;
+            flex: 1;
+        }
+
+        #modal button:hover {
+            background: #5fd0e0;
+        }
+
+        #modal button#cancel-button {
+            background: #aaa;
+            color: #000;
+        }
+
+        #modal-buttons {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 20px;
+        }
+
+        /* Login Modal Styles */
+        #login-modal {
+            display: none;
+            /* Hidden by default */
+            position: fixed;
+            z-index: 1002;
+            /* Above other elements */
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow-y: auto;
+            background-color: rgba(0, 0, 0, 0.7);
+            /* Black background with opacity */
+            padding-top: 50px;
+        }
+
+        #login-modal-content {
+            background-color: #333;
+            margin: auto;
+            padding: 20px;
+            border: 1px solid #888;
+            width: 90%;
+            max-width: 500px;
+            border-radius: 10px;
+            color: #fff;
+        }
+
+        #login-modal h2 {
+            margin-top: 0;
+            margin-bottom: 20px;
+        }
+
+        #login-modal form {
+            display: flex;
+            flex-direction: column;
+            align-items: stretch;
+        }
+
+        #login-modal label {
+            text-align: left;
+            margin-bottom: 5px;
+            font-size: 14px;
+            color: #ccc;
+        }
+
+        #login-modal input[type="text"],
+        #login-modal input[type="password"] {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 15px;
+            border: none;
+            border-radius: 5px;
+            background-color: #555;
+            color: #fff;
+            font-size: 16px;
+            box-sizing: border-box;
+            outline: none;
+            transition: background-color 0.3s, box-shadow 0.3s;
+        }
+
+        #login-modal input[type="text"]:focus,
+        #login-modal input[type="password"]:focus {
+            background-color: #666;
+            box-shadow: 0 0 5px rgba(111, 234, 246, 0.8);
+        }
+
+        #login-modal-buttons {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 20px;
+        }
+
+        #login-modal button {
+            margin: 10px 5px 0 5px;
+            padding: 12px 20px;
+            font-size: 16px;
+            cursor: pointer;
+            background: #6feaf6;
+            color: #000;
+            border: none;
+            border-radius: 5px;
+            transition: 0.3s;
+            flex: 1;
+        }
+
+        #login-modal button:hover {
+            background: #5fd0e0;
+        }
+
+        #login-modal button#login-cancel-button {
+            background: #aaa;
+            color: #000;
+        }
+
+
+        /* Legend Styles */
+        .legend {
+            display: flex;
+            justify-content: center;
+            margin-top: 20px;
+            flex-wrap: wrap;
+        }
+
+        .legend-item {
+            display: flex;
+            align-items: center;
+            margin: 5px 10px;
+        }
+
+        .legend-item div {
+            width: 20px;
+            height: 20px;
+            margin-right: 5px;
+            border-radius: 3px;
+        }
+
+        .legend-item span {
+            font-size: 14px;
+        }
+
+        /* Locked Seat Style */
+        .seat.locked {
+            background-color: #FFA500;
+            /* Orange color for locked seats */
+            cursor: not-allowed;
+            color: #000;
+            /* Black text for better contrast */
+        }
+
+        /* Responsive Styles */
+        @media (max-width: 600px) {
+            h1 {
+                font-size: 1.5em;
+            }
+
+            .screen {
+                height: 30px;
+                line-height: 30px;
+            }
+
+            .row-label {
+                width: 15px;
+                font-size: 0.9em;
+                margin-right: 3px;
+            }
+
+            .seat {
+                height: 25px;
+                width: 25px;
+                margin: 2px;
+                font-size: 10px;
+                /* Smaller font for smaller seats */
+            }
+
+            #book-button {
+                padding: 12px 25px;
+                font-size: 16px;
+            }
+
+            #modal-content {
+                margin: 20% auto;
+                padding: 15px;
+            }
+
+            #modal button {
+                margin: 5px;
+                padding: 10px;
+                font-size: 14px;
+            }
+
+            .legend-item {
+                margin: 5px 5px;
+            }
+
+            .legend-item div {
+                width: 15px;
+                height: 15px;
+            }
+
+            #modal input[type="text"],
+            #modal input[type="tel"],
+            #modal select {
+                padding: 8px;
+                font-size: 14px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <h1>OPERA KOMEDI SAMADI Ticket Booking</h1>
+    <!-- Seat map container -->
+    <div id="seat-map-container">
+        <div id="seat-map">
+            <!-- Seats will be generated here -->
+        </div>
+    </div>
+    <!-- Screen placed at the bottom -->
+    <div class="screen">PANGGUNG</div>
+    <!-- Legend -->
+    <div class="legend">
+        <div class="legend-item">
+            <div class="seat imam"></div>
+            <span>Imam - Free</span>
+        </div>
+        <div class="legend-item">
+            <div class="seat vvip"></div>
+            <span>Platinum - Rp. 2,000,000</span>
+        </div>
+        <div class="legend-item">
+            <div class="seat special"></div>
+            <span>Gold - Rp. 1,000,000</span>
+        </div>
+        <div class="legend-item">
+            <div class="seat regular"></div>
+            <span>Silver - Rp. 750,000</span>
+        </div>
+        <div class="legend-item">
+            <div class="seat backseat"></div>
+            <span>Bronze - Rp. 500,000</span>
+        </div>
+    </div>
+    <!-- Confirmation message moved above the button -->
+    <div id="confirmation-message"></div>
+    <!-- Book button fixed at the bottom -->
+    <button id="book-button" disabled>Book Selected Seats</button>
+
+    <!-- Login Modal -->
+    <div id="login-modal">
+        <div id="login-modal-content">
+            <h2>Login</h2>
+            <form id="login-form">
+                <label for="username">Username</label>
+                <input type="text" id="username" name="username" required placeholder="Enter your username">
+
+                <label for="password">Password</label>
+                <input type="password" id="password" name="password" required placeholder="Enter your password">
+
+                <div id="login-modal-buttons">
+                    <button type="button" id="login-cancel-button">Cancel</button>
+                    <button type="submit" id="login-submit-button">Login</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Confirmation Modal -->
+    <div id="modal">
+        <div id="modal-content">
+            <h2>Confirm Your Booking</h2>
+            <p id="modal-seat-info"></p>
+            <form id="booking-form">
+                <label for="buyer-name">Buyer Name</label>
+                <input type="text" id="buyer-name" name="buyer-name" required placeholder="Enter your name">
+
+                <label for="phone-number">Phone Number</label>
+                <input type="tel" id="phone-number" name="phone-number" required pattern="[0-9]{10,15}"
+                    placeholder="Enter your phone number">
+            </form>
+            <div id="modal-buttons">
+                <button id="cancel-button">Cancel</button>
+                <button id="confirm-button">Confirm Booking</button>
+            </div>
+        </div>
+    </div>
+    <script src="https://cdn.socket.io/4.5.1/socket.io.min.js" crossorigin="anonymous"></script>
+    <script>
+        // JavaScript Code
+        let userLoggedIn = false; // Track login state
+
+        const baseURL = 'http://188.166.223.224:5000';
+        // const baseURL = 'http://127.0.0.1:5000';
+
+        // JavaScript Code
+        const seatMap = [
+            ['A1', 'A2', 'A3', 'A4', 'A5', 'A6', 'A7', '', 'A8', 'A9', 'A10', 'A11', 'A12', 'A13', 'A14', 'A15', 'A16', 'A17', 'A18', 'A19', 'A20', '', 'A21', 'A22', 'A23', 'A24', 'A25', 'A26', 'A27', 'A28', 'A29', 'A30',],
+            ['B1', 'B2', 'B3', 'B4', 'B5', 'B6', 'B7', '', 'B8', 'B9', 'B10', 'B11', 'B12', 'B13', 'B14', 'B15', 'B16', 'B17', 'B18', 'B19', 'B20', '', 'B21', 'B22', 'B23', 'B24', 'B25', 'B26', 'B27', 'B28', 'B29', 'B30',],
+            ['C1', 'C2', 'C3', 'C4', 'C5', 'C6', 'C7', '', 'C8', 'C9', 'C10', 'C11', 'C12', 'C13', 'C14', 'C15', 'C16', 'C17', 'C18', 'C19', 'C20', '', 'C21', 'C22', 'C23', 'C24', 'C25', 'C26', 'C27', 'C28', 'C29', 'C30',],
+            ['D1', 'D2', 'D3', 'D4', 'D5', 'D6', 'D7', '', 'D8', 'D9', 'D10', 'D11', 'D12', 'D13', 'D14', 'D15', 'D16', 'D17', 'D18', 'D19', 'D20', '', 'D21', 'D22', 'D23', 'D24', 'D25', 'D26', 'D27', 'D28', 'D29', 'D30',],
+            ['E1', 'E2', 'E3', 'E4', 'E5', 'E6', 'E7', '', 'E8', 'E9', 'E10', 'E11', 'E12', 'E13', 'E14', 'E15', 'E16', 'E17', 'E18', 'E19', 'E20', '', 'E21', 'E22', 'E23', 'E24', 'E25', 'E26', 'E27', 'E28', 'E29', 'E30',],
+            ['F1', 'F2', 'F3', 'F4', 'F5', 'F6', 'F7', '', 'F8', 'F9', 'F10', 'F11', 'F12', 'F13', 'F14', 'F15', 'F16', 'F17', 'F18', 'F19', 'F20', '', 'F21', 'F22', 'F23', 'F24', 'F25', 'F26', 'F27', 'F28', 'F29', 'F30',],
+            ['G1', 'G2', 'G3', 'G4', 'G5', 'G6', 'G7', '', 'G8', 'G9', 'G10', 'G11', 'G12', 'G13', 'G14', 'G15', 'G16', 'G17', 'G18', 'G19', 'G20', '', 'G21', 'G22', 'G23', 'G24', 'G25', 'G26', 'G27', 'G28', 'G29', 'G30',],
+            ['H1', 'H2', 'H3', 'H4', 'H5', 'H6', 'H7', '', 'H8', 'H9', 'H10', 'H11', 'H12', 'H13', 'H14', 'H15', 'H16', 'H17', 'H18', 'H19', 'H20', '', 'H21', 'H22', 'H23', 'H24', 'H25', 'H26', 'H27', 'H28', 'H29', 'H30',],
+            ['I1', 'I2', 'I3', 'I4', 'I5', 'I6', 'I7', '', 'I8', 'I9', 'I10', 'I11', 'I12', 'I13', 'I14', 'I15', 'I16', 'I17', 'I18', 'I19', 'I20', '', 'I21', 'I22', 'I23', 'I24', 'I25', 'I26', 'I27', 'I28', 'I29', 'I30',],
+            ['J1', 'J2', 'J3', 'J4', 'J5', 'J6', 'J7', '', 'J8', 'J9', 'J10', 'J11', 'J12', 'J13', 'J14', 'J15', 'J16', 'J17', 'J18', 'J19', 'J20', '', 'J21', 'J22', 'J23', 'J24', 'J25', 'J26', 'J27', 'J28', 'J29', 'J30',],
+            ['K1', 'K2', 'K3', 'K4', 'K5', 'K6', 'K7', '', 'K8', 'K9', 'K10', 'K11', 'K12', 'K13', 'K14', 'K15', 'K16', 'K17', 'K18', 'K19', 'K20', '', 'K21', 'K22', 'K23', 'K24', 'K25', 'K26', 'K27', 'K28', 'K29', 'K30',],
+            ['L1', 'L2', 'L3', 'L4', 'L5', 'L6', 'L7', '', 'L8', 'L9', 'L10', 'L11', 'L12', 'L13', 'L14', 'L15', 'L16', 'L17', 'L18', 'L19', 'L20', '', 'L21', 'L22', 'L23', 'L24', 'L25', 'L26', 'L27', 'L28', 'L29', 'L30',],
+            ['M1', 'M2', 'M3', 'M4', 'M5', 'M6', 'M7', '', 'M8', 'M9', 'M10', 'M11', 'M12', 'M13', 'M14', 'M15', 'M16', 'M17', 'M18', 'M19', 'M20', '', 'M21', 'M22', 'M23', 'M24', 'M25', 'M26', 'M27', 'M28', 'M29', 'M30',],
+            ['N1', 'N2', 'N3', 'N4', 'N5', 'N6', 'N7', '', 'N8', 'N9', 'N10', 'N11', 'N12', 'N13', 'N14', 'N15', 'N16', 'N17', 'N18', 'N19', 'N20', '', 'N21', 'N22', 'N23', 'N24', 'N25', 'N26', 'N27', 'N28', 'N29', 'N30',],
+            ['O1', 'O2', 'O3', 'O4', 'O5', 'O6', 'O7', '', 'O8', 'O9', 'O10', 'O11', 'O12', 'O13', 'O14', 'O15', 'O16', 'O17', 'O18', 'O19', 'O20', '', 'O21', 'O22', 'O23', 'O24', 'O25', 'O26', 'O27', 'O28', 'O29', 'O30',],
+            ['P1', 'P2', 'P3', 'P4', 'P5', 'P6', 'P7', '', 'P8', 'P9', 'P10', 'P11', 'P12', 'P13', 'P14', 'P15', 'P16', 'P17', 'P18', 'P19', 'P20', '', 'P21', 'P22', 'P23', 'P24', 'P25', 'P26', 'P27', 'P28', 'P29', 'P30',],
+            ['', '', '', '', '', '', '', '', 'Q1', 'Q2', 'Q3', 'Q4', 'Q5', 'Q6', 'Q7', 'Q8', 'Q9', 'Q10', 'Q11', 'Q12', 'Q13', '', 'Q14', 'Q15', 'Q16', 'Q17', 'Q18', 'Q19', 'Q20', 'Q21', 'Q22', 'Q23',],
+            ['', '', '', '', '', '', '', '', 'R1', 'R2', 'R3', 'R4', 'R5', 'R6', 'R7', 'R8', 'R9', 'R10', 'R11', 'R12', 'R13', '', 'R14', 'R15', 'R16', 'R17', 'R18', 'R19', 'R20', 'R21', 'R22', 'R23',],
+
+        ];
+
+        // Login Modal Elements
+        const loginModal = document.getElementById('login-modal');
+        const loginForm = document.getElementById('login-form');
+        const loginCancelButton = document.getElementById('login-cancel-button');
+
+        const movieName = "TEMA HARI INI"; // You can change the movie name here
+        const showDate = "15/12/2023";         // Set the show date here
+        const showTime = "19:00";
+
+        const seatPrices = {
+            'vvip': 2000000,
+            'special': 1000000,
+            'regular': 750000,
+            'backseat': 500000,
+            'imam': 0
+        };
+
+        const seatMapContainer = document.getElementById('seat-map');
+        const bookButton = document.getElementById('book-button');
+        const confirmationMessage = document.getElementById('confirmation-message');
+        const modal = document.getElementById('modal');
+        const modalSeatInfo = document.getElementById('modal-seat-info');
+        const confirmButton = document.getElementById('confirm-button');
+        const cancelButton = document.getElementById('cancel-button');
+        const bookingForm = document.getElementById('booking-form');
+        let selectedSeats = [];
+        let totalPrice = 0;
+
+        // Rows for different classes
+        const imamRows = ['A'];
+        const vvipRows = ['B', 'C', 'D', 'E', 'F', 'G', 'H', 'I'];
+        const specialRows = ['J', 'K', 'L', 'M', 'N', 'O', 'P'];
+        const lastRow = ['R', 'Q']
+        const backseatRows = specialRows;
+
+        // Reverse the seat map to reflect the new orientation
+        const reversedSeatMap = seatMap.slice().reverse();
+
+
+        // Generate Seat Map with classes
+        const processedSeatMap = reversedSeatMap.map(row => {
+            return row.map(seat => {
+                if (seat === '') return '';
+                const rowLetter = seat.match(/[A-Z]+/)[0];
+                const seatNumber = parseInt(seat.match(/\d+/)[0]);
+                let seatClass = 'regular'; // Default class
+
+                if (imamRows.includes(rowLetter)) {
+                    if (seatNumber >= 8 && seatNumber <= 20) {
+                        seatClass = 'imam';
+                    } else {
+                        seatClass = 'regular';
+                    }
+                } else if (vvipRows.includes(rowLetter)) {
+                    if (seatNumber >= 8 && seatNumber <= 20) {
+                        seatClass = 'vvip';
+                    } else {
+                        seatClass = 'regular';
+                    }
+                } else if (specialRows.includes(rowLetter)) {
+                    if (seatNumber >= 8 && seatNumber <= 20) {
+                        seatClass = 'special';
+                    } else {
+                        seatClass = 'backseat';
+                    }
+                } else if (lastRow.includes(rowLetter)) {
+                    if (seatNumber >= 1 && seatNumber <= 13) {
+                        seatClass = 'special';
+                    } else {
+                        seatClass = 'backseat';
+                    }
+                }
+
+                return { label: seat, class: seatClass };
+            });
+        });
+
+        // Function to mark occupied seats
+        function markOccupiedSeats(occupiedSeats) {
+            occupiedSeats.forEach(seatNumber => {
+                const seatDiv = document.querySelector(`[data-seat-number='${seatNumber}']`);
+                if (seatDiv) {
+                    seatDiv.classList.add('occupied');
+                    seatDiv.classList.remove('selected');
+                    seatDiv.removeEventListener('click', selectSeat); // Prevent clicking
+                }
+            });
+        }
+
+        // Generate Seat Map
+        // processedSeatMap.forEach((row) => {
+        //     const rowDiv = document.createElement('div');
+        //     rowDiv.className = 'row';
+
+        //     // Get the row label from the first non-empty seat
+        //     let rowLabelText = '';
+        //     for (let seat of row) {
+        //         if (seat !== '' && seat !== null) {
+        //             rowLabelText = seat.label.match(/[A-Z]+/)[0]; // Extract letters for row label
+        //             break;
+        //         }
+        //     }
+
+        //     // Create the row label div
+        //     const rowLabelDiv = document.createElement('div');
+        //     rowLabelDiv.className = 'row-label';
+        //     rowLabelDiv.textContent = rowLabelText;
+        //     rowDiv.appendChild(rowLabelDiv);
+
+        //     // Create the seats container div
+        //     const seatsDiv = document.createElement('div');
+        //     seatsDiv.className = 'seats';
+
+        //     row.forEach((seat) => {
+        //         const seatDiv = document.createElement('div');
+        //         if (seat === '' || seat === null) {
+        //             seatDiv.className = 'seat hidden';
+        //         } else {
+        //             seatDiv.className = `seat ${seat.class}`;
+        //             seatDiv.dataset.seatNumber = seat.label;
+        //             seatDiv.dataset.seatClass = seat.class;
+        //             seatDiv.textContent = seat.label; // Add seat number inside the seat div
+        //             seatDiv.addEventListener('click', selectSeat);
+        //         }
+        //         seatsDiv.appendChild(seatDiv);
+        //     });
+        //     rowDiv.appendChild(seatsDiv);
+        //     seatMapContainer.appendChild(rowDiv);
+        // });
+
+        // Initialize Socket.IO client
+        const socket = io(baseURL);
+
+        // Initialize arrays to store occupied and locked seats
+        let occupiedSeats = [];
+        let lockedSeats = [];
+
+        // Function to fetch occupied and locked seats from backend
+        async function fetchOccupiedAndLockedSeats() {
+            try {
+                const response = await fetch(`${baseURL}/occupied-seats`); // Update the URL if necessary
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                const data = await response.json();
+
+                // Update occupiedSeats and lockedSeats arrays
+                occupiedSeats = data.occupied_seats;
+                lockedSeats = data.locked_seats;
+            } catch (error) {
+                console.error('Error fetching occupied and locked seats:', error);
+                occupiedSeats = [];
+                lockedSeats = [];
+            }
+        }
+
+        // Socket.IO Event Handlers
+        socket.on('seats_occupied', (data) => {
+            console.log('Received seats_occupied event:', data.seats);
+            data.seats.forEach((seatLabel) => {
+                const seatDiv = document.querySelector(`[data-seat-number='${seatLabel}']`);
+                if (seatDiv) {
+                    console.log(`Updating seat ${seatLabel} to occupied.`);
+                    // Remove 'selected' and 'locked' classes
+                    seatDiv.classList.remove('selected', 'locked');
+                    seatDiv.classList.add('occupied');
+                    seatDiv.removeEventListener('click', selectSeat);
+
+                    // Remove from selectedSeats if it was selected
+                    selectedSeats = selectedSeats.filter(seat => seat !== seatLabel);
+                    updateBookButton();
+                } else {
+                    console.log(`Seat ${seatLabel} not found in DOM.`);
+                }
+            });
+        });
+
+        // Add this event listener to detect when the page visibility changes
+        document.addEventListener('visibilitychange', function () {
+            if (document.visibilityState === 'hidden') {
+                // Page has become hidden
+                // Check if the confirmation modal is not open
+                if (modal.style.display !== 'block' && loginModal.style.display !== 'block') {
+                    // Release locks on selected seats
+                    selectedSeats.forEach(seatNumber => {
+                        socket.emit('unlock_seat', { seat: seatNumber });
+                    });
+                    // Clear selectedSeats and totalPrice
+                    selectedSeats = [];
+                    totalPrice = 0;
+                    updateBookButton();
+                }
+            } else if (document.visibilityState === 'visible') {
+                // Page has become visible
+                // Check if the confirmation modal is not open
+                if (modal.style.display !== 'block' && loginModal.style.display !== 'block') {
+                    refreshSeatMap();
+                }
+            }
+        });
+
+        // Define the refreshSeatMap function
+        function refreshSeatMap() {
+            // Clear selectedSeats and totalPrice
+            selectedSeats = [];
+            totalPrice = 0;
+            updateBookButton();
+
+            fetchOccupiedAndLockedSeats().then(() => {
+                generateSeatMap();
+            });
+        }
+
+        function generateSeatMap() {
+            seatMapContainer.innerHTML = '';
+            processedSeatMap.forEach((row) => {
+                const rowDiv = document.createElement('div');
+                rowDiv.className = 'row';
+
+                // Get the row label from the first non-empty seat
+                let rowLabelText = '';
+                for (let seat of row) {
+                    if (seat !== '' && seat !== null) {
+                        rowLabelText = seat.label.match(/[A-Z]+/)[0]; // Extract letters for row label
+                        break;
+                    }
+                }
+
+                // Create the row label div
+                const rowLabelDiv = document.createElement('div');
+                rowLabelDiv.className = 'row-label';
+                rowLabelDiv.textContent = rowLabelText;
+                rowDiv.appendChild(rowLabelDiv);
+
+                // Create the seats container div
+                const seatsDiv = document.createElement('div');
+                seatsDiv.className = 'seats';
+
+                row.forEach((seat) => {
+                    const seatDiv = document.createElement('div');
+                    if (seat === '' || seat === null) {
+                        seatDiv.className = 'seat hidden';
+                    } else {
+                        seatDiv.className = `seat ${seat.class}`;
+                        seatDiv.dataset.seatNumber = seat.label;
+                        seatDiv.dataset.seatClass = seat.class;
+                        seatDiv.textContent = seat.label; // Add seat number inside the seat div
+
+                        // Check if seat is occupied
+                        if (occupiedSeats.includes(seat.label)) {
+                            seatDiv.classList.add('occupied');
+                        }
+                        // Check if seat is locked
+                        else if (lockedSeats.includes(seat.label)) {
+                            seatDiv.classList.add('locked');
+                        } else {
+                            seatDiv.addEventListener('click', selectSeat);
+                        }
+                    }
+                    seatsDiv.appendChild(seatDiv);
+                });
+                rowDiv.appendChild(seatsDiv);
+                seatMapContainer.appendChild(rowDiv);
+            });
+        }
+
+        // Update initializeSeatMap to use the new generateSeatMap function
+        async function initializeSeatMap() {
+            await fetchOccupiedAndLockedSeats();
+            generateSeatMap();
+        }
+
+        // Call initializeSeatMap on page load
+        window.addEventListener('load', initializeSeatMap);
+
+        // Update seat status when receiving real-time updates
+        socket.on('lock_seats', (data) => {
+            data.seats.forEach((seatLabel) => {
+                const seatDiv = document.querySelector(`[data-seat-number='${seatLabel}']`);
+                if (seatDiv && !seatDiv.classList.contains('occupied')) {
+                    seatDiv.classList.add('locked');
+                    seatDiv.removeEventListener('click', selectSeat);
+
+                    // Remove from selectedSeats if it was selected
+                    selectedSeats = selectedSeats.filter(seat => seat !== seatLabel);
+                    updateBookButton();
+                }
+            });
+        });
+
+        socket.on('unlock_seats', (data) => {
+            data.seats.forEach((seatLabel) => {
+                const seatDiv = document.querySelector(`[data-seat-number='${seatLabel}']`);
+                if (seatDiv && seatDiv.classList.contains('locked') && !seatDiv.classList.contains('occupied')) {
+                    seatDiv.classList.remove('locked');
+                    seatDiv.addEventListener('click', selectSeat);
+                }
+            });
+        });
+
+        socket.on('seat_lock_failed', (data) => {
+            const seatLabel = data.seat;
+            const seatDiv = document.querySelector(`[data-seat-number='${seatLabel}']`);
+            if (seatDiv) {
+                seatDiv.classList.add('occupied');
+                seatDiv.classList.remove('selected');
+                seatDiv.classList.remove('locked');
+                seatDiv.removeEventListener('click', selectSeat);
+
+                // Remove from selectedSeats if it was selected
+                selectedSeats = selectedSeats.filter(seat => seat !== seatLabel);
+                updateBookButton();
+            }
+            alert(`Seat ${seatLabel} is no longer available.`);
+        });
+
+
+        function selectSeat(event) {
+            const seatDiv = event.target;
+            const seatNumber = seatDiv.dataset.seatNumber;
+
+            if (seatDiv.classList.contains('occupied') || seatDiv.classList.contains('locked')) {
+                return;
+            }
+
+            if (seatDiv.classList.contains('selected')) {
+                // Deselect the seat
+                seatDiv.classList.remove('selected');
+                selectedSeats = selectedSeats.filter(seat => seat !== seatNumber);
+                totalPrice -= seatPrices[seatDiv.dataset.seatClass];
+                updateBookButton();
+
+                // Inform server to unlock the seat
+                socket.emit('unlock_seat', { seat: seatNumber });
+            } else {
+                // Attempt to select the seat
+                socket.emit('lock_seat', { seat: seatNumber });
+
+                // Tentatively add the seat while waiting for server confirmation
+                seatDiv.classList.add('selected');
+                selectedSeats.push(seatNumber);
+                totalPrice += seatPrices[seatDiv.dataset.seatClass];
+                updateBookButton();
+            }
+        }
+
+
+        // Update Book Button State
+        function updateBookButton() {
+            if (selectedSeats.length === 0) {
+                bookButton.disabled = true;
+                bookButton.textContent = 'Book Selected Seats';
+            } else {
+                bookButton.disabled = false;
+                const formattedPrice = new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR' }).format(totalPrice);
+                bookButton.textContent = `Book ${selectedSeats.length} Seat(s) - ${formattedPrice}`;
+            }
+        }
+
+        // Show Confirmation Modal
+        bookButton.addEventListener('click', () => {
+            if (selectedSeats.length === 0) {
+                return;
+            }
+
+            if (!userLoggedIn) {
+                // Show login modal
+                loginModal.style.display = 'block';
+                return;
+            }
+
+            // Show confirmation modal
+            showConfirmationModal();
+        });
+
+        function showConfirmationModal() {
+            const seatDetails = selectedSeats.map(seatNumber => {
+                const seatDiv = document.querySelector(`[data-seat-number='${seatNumber}']`);
+                const seatClass = seatDiv.dataset.seatClass;
+                const seatPrice = seatPrices[seatClass];
+                const formattedPrice = new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR' }).format(seatPrice);
+                return `${seatNumber} (${formattedPrice})`;
+            });
+            const formattedTotalPrice = new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR' }).format(totalPrice);
+            modalSeatInfo.innerHTML = `
+        <p>You are booking the following seat(s):</p>
+        <p>${seatDetails.join(', ')}</p>
+        <p>Total Price: <strong>${formattedTotalPrice}</strong></p>
+        `;
+            modal.style.display = 'block';
+        }
+
+        // Add a variable to store the username
+        let username = '';
+        let namapic = '';
+        let phonepic = '';
+
+        loginForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            const usernameInput = document.getElementById('username').value.trim();
+            const password = document.getElementById('password').value;
+
+            // Send login request to the server
+            fetch(`${baseURL}/login`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    username: usernameInput,
+                    password: password
+                })
+            })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        userLoggedIn = true;
+                        username = data.username; // Store the logged-in username
+                        namapic = data.name;
+                        phonepic = data.phone;
+                        loginModal.style.display = 'none';
+                        loginForm.reset();
+                        // After successful login, proceed to show confirmation modal
+                        showConfirmationModal();
+                    } else {
+                        alert('Login failed: ' + data.message);
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    alert('An error occurred during login.');
+                });
+        });
+
+        // Cancel Login
+        loginCancelButton.addEventListener('click', () => {
+            loginModal.style.display = 'none';
+            loginForm.reset();
+        });
+
+        // Show Confirmation Modal
+        // bookButton.addEventListener('click', () => {
+        //     if (selectedSeats.length === 0) {
+        //         return;
+        //     }
+        //     const seatDetails = selectedSeats.map(seatNumber => {
+        //         const seatDiv = document.querySelector(`[data-seat-number='${seatNumber}']`);
+        //         const seatClass = seatDiv.dataset.seatClass;
+        //         const seatPrice = seatPrices[seatClass];
+        //         const formattedPrice = new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR' }).format(seatPrice);
+        //         return `${seatNumber} (${formattedPrice})`;
+        //     });
+        //     const formattedTotalPrice = new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR' }).format(totalPrice);
+        //     modalSeatInfo.innerHTML = `
+        //         <p>You are booking the following seat(s):</p>
+        //         <p>${seatDetails.join(', ')}</p>
+        //         <p>Total Price: <strong>${formattedTotalPrice}</strong></p>
+        //     `;
+        //     modal.style.display = 'block';
+        // });
+
+        // Confirm Booking
+        confirmButton.addEventListener('click', () => {
+            // Disable the confirm button to prevent multiple clicks
+            confirmButton.disabled = true;
+
+            // Inside the confirm button click event
+            confirmButton.textContent = 'Processing...';
+            confirmButton.style.cursor = 'not-allowed';
+
+            // Validate form inputs
+            const buyerName = document.getElementById('buyer-name').value.trim();
+            const phoneNumber = document.getElementById('phone-number').value.trim();
+
+            if (!buyerName || !phoneNumber) {
+                alert('Please fill in all the required fields.');
+                confirmButton.disabled = false;
+                confirmButton.textContent = 'Confirm Booking';
+                confirmButton.style.cursor = 'pointer';
+                return;
+            }
+
+            // Prepare WhatsApp number by adding '+62' to the phone number
+            let whatsappNumber = phoneNumber.replace(/\D/g, ''); // Remove non-digit characters
+            whatsappNumber = whatsappNumber.replace(/^0+/, '');   // Remove leading zeros
+            whatsappNumber = '62' + whatsappNumber;             // Add '+62' prefix
+
+            // Set booking status to 'SOLD' automatically
+            const bookingStatus = 'SOLD';
+            const lunasStatus = 'Yes';
+            const tglBayar = getCurrentDate();
+
+            // Prepare booking data for each seat
+            const bookingDetails = selectedSeats.map(seatNumber => {
+                const seatDiv = document.querySelector(`[data-seat-number='${seatNumber}']`);
+                const seatClass = seatDiv.dataset.seatClass;
+                const seatPrice = seatPrices[seatClass];
+                const rowLetter = getRowLetter(seatNumber);
+                const seatNo = getSeatNumber(seatNumber);
+
+                return {
+                    'WARNA': getSeatColor(seatClass),
+                    'BARIS': rowLetter,
+                    'NO KURSI': seatNo,
+                    'NAMA': buyerName,
+                    'NO HP': whatsappNumber,
+                    'SOLD/BOOK/NO': bookingStatus,
+                    'QTY': 1,
+                    'NILAI': seatPrice,
+                    'Tgl Bayar': tglBayar,
+                    'Lunas': lunasStatus,
+                    'Amount': seatPrice,
+                    'PIC': namapic, // Use the stored username
+                    'Gelang': '',
+                    'NO BANTU': '',
+                    'KET': ''
+                };
+            });
+
+            // Send booking data to server
+            fetch(`${baseURL}/book`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    'username': namapic, // Include the username
+                    'pic_whatsapp': phonepic,
+                    'metadata': {
+                        'movieName': movieName,
+                        'showDate': showDate,
+                        'showTime': showTime
+                    },
+                    'bookings': bookingDetails,
+                    'user_whatsapp': `${whatsappNumber}`
+                })
+            })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        // Release locks on seats
+                        selectedSeats.forEach(seatNumber => {
+                            socket.emit('unlock_seat', { seat: seatNumber });
+                        });
+
+                        // Prepare data for the ticket
+                        const id = data.id;
+
+                        // Redirect to ticket.html with booking details
+                        // window.open(`/ticket/${id}.png`, '_blank');
+
+                        // Mark seats as occupied
+                        selectedSeats.forEach((seatNumber) => {
+                            const seatDiv = document.querySelector(`[data-seat-number='${seatNumber}']`);
+                            seatDiv.classList.remove('selected');
+                            seatDiv.classList.remove('locked');
+                            seatDiv.classList.add('occupied');
+                        });
+
+                        // Reset selection and close modal
+                        selectedSeats = [];
+                        totalPrice = 0;
+                        updateBookButton();
+                        modal.style.display = 'none';
+                        bookingForm.reset();
+
+                        confirmButton.disabled = false;
+                        confirmButton.textContent = 'Confirm Booking';
+                        confirmButton.style.cursor = 'pointer';
+
+                        alert('Booking confirmed, ticket generated, and sent via WhatsApp.');
+                    } else {
+                        alert(`Error: ${data.message}`);
+                        confirmButton.disabled = false;
+                        confirmButton.textContent = 'Confirm Booking';
+                        confirmButton.style.cursor = 'pointer';
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    alert('An error occurred while saving booking data.');
+                    confirmButton.disabled = false;
+                    confirmButton.textContent = 'Confirm Booking';
+                    confirmButton.style.cursor = 'pointer';
+                });
+        });
+
+
+        // Cancel Booking
+        cancelButton.addEventListener('click', () => {
+            // Release locks on selected seats
+            selectedSeats.forEach(seatNumber => {
+                socket.emit('unlock_seat', { seat: seatNumber });
+            });
+
+            modal.style.display = 'none';
+            bookingForm.reset();
+
+            // Re-enable the confirm button
+            confirmButton.disabled = false;
+        });
+
+        // Close modal when clicking outside of modal content
+        window.onclick = function (event) {
+            if (event.target == modal) {
+                modal.style.display = "none";
+                bookingForm.reset();
+            } else if (event.target == loginModal) {
+                loginModal.style.display = 'none';
+                loginForm.reset();
+            }
+        }
+
+        // When the page is unloaded (e.g., user closes tab), release locks
+        window.addEventListener('beforeunload', () => {
+            if (modal.style.display !== 'block' && loginModal.style.display !== 'block') {
+                // Release locks on selected seats
+                selectedSeats.forEach(seatNumber => {
+                    socket.emit('unlock_seat', { seat: seatNumber });
+                });
+            }
+        });
+
+        // Helper Functions
+        function getSeatColor(seatClass) {
+            const colorMap = {
+                'vvip': 'MERAH',    // Red
+                'special': 'UNGU',  // Purple
+                'regular': 'HIJAU', // Green
+                'backseat': 'KUNING', // Yellow
+                'imam': 'ORANGE'
+            };
+            return colorMap[seatClass];
+        }
+
+        function getRowLetter(seatNumber) {
+            return seatNumber.match(/[A-Z]+/)[0];
+        }
+
+        function getSeatNumber(seatNumber) {
+            return seatNumber.match(/\d+/)[0];
+        }
+
+        function getCurrentDate() {
+            const today = new Date();
+            const day = String(today.getDate()).padStart(2, '0');
+            const month = String(today.getMonth() + 1).padStart(2, '0'); // January is 0
+            const year = today.getFullYear();
+            return `${day}/${month}/${year}`; // Returns 'DD/MM/YYYY'
+        }
+    </script>
+</body>
+
+</html>

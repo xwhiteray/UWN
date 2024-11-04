@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Your Ticket</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #f2f2f2;
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        .ticket-container {
+            background-color: #fff;
+            width: 700px;
+            max-width: 100%;
+            border: 1px solid #ccc;
+            border-radius: 10px;
+            overflow: hidden;
+            display: flex;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            position: relative;
+        }
+        .ticket-container::before,
+        .ticket-container::after {
+            content: '';
+            position: absolute;
+            width: 20px;
+            height: 20px;
+            background-color: #f2f2f2;
+            border-radius: 50%;
+            z-index: 1;
+        }
+        .ticket-container::before {
+            top: -10px;
+            left: calc(50% - 10px);
+        }
+        .ticket-container::after {
+            bottom: -10px;
+            left: calc(50% - 10px);
+        }
+        .ticket-section {
+            padding: 20px;
+            width: 50%;
+            box-sizing: border-box;
+        }
+        .ticket-section.left {
+            border-right: 1px dashed #ccc;
+            position: relative;
+        }
+        .ticket-section.left::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            right: -11px;
+            width: 20px;
+            height: 100%;
+            background: repeating-linear-gradient(
+                to bottom,
+                #f2f2f2,
+                #f2f2f2 10px,
+                transparent 10px,
+                transparent 20px
+            );
+            z-index: 1;
+        }
+        .ticket-section.right {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        .ticket-info h1 {
+            margin-top: 0;
+            font-size: 28px;
+            color: #333;
+        }
+        .ticket-info p {
+            margin: 10px 0;
+            font-size: 18px;
+            color: #555;
+        }
+        .ticket-info p span {
+            color: #000;
+            font-weight: bold;
+        }
+        .qr-code {
+            width: 150px;
+            height: 150px;
+        }
+        .logo {
+            width: 120px;
+            margin-bottom: 20px;
+        }
+    </style>
+    <!-- Include QRCode.js Library -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+</head>
+<body>
+    <div class="ticket-container">
+        <div class="ticket-section left">
+            <div class="ticket-info">
+                <!-- <img src="LOGO PANITIA.png" alt="Cinema Logo" class="logo"> -->
+                <h1>OPERA KOMEDI SAMADI</h1>
+                <p><span>Tema:</span> <span id="movie-name"></span></p>
+                <p><span>Seat(s):</span> <span id="seat-numbers"></span></p>
+                <p><span>Date:</span> <span id="show-date"></span></p>
+                <p><span>Time:</span> <span id="show-time"></span></p>
+            </div>
+        </div>
+        <div class="ticket-section right">
+            <div id="qrcode" class="qr-code"></div>
+        </div>
+    </div>
+    <script>
+        // Function to get query parameters
+        function getQueryParams() {
+            const params = {};
+            const queryString = window.location.search.substring(1);
+            const pairs = queryString.split('&');
+            for (let pair of pairs) {
+                const [key, value] = pair.split('=');
+                if (key && value) {
+                    params[decodeURIComponent(key)] = decodeURIComponent(value.replace(/\+/g, ' '));
+                }
+            }
+            return params;
+        }
+
+        // Function to display booking details
+        function displayBookingDetails(params) {
+            const details = params.ticket ? JSON.parse(params.ticket) : null;
+
+            if (!details) {
+                alert('No booking details found.');
+                return;
+            }
+
+            const movieName = details.movie || 'Unknown Movie';
+            const seats = details.seats || ['Unknown Seats'];
+            const showDate = details.date || 'N/A';
+            const showTime = details.time || 'N/A';
+
+            // Display movie name and seats
+            document.getElementById('movie-name').textContent = movieName;
+            document.getElementById('seat-numbers').textContent = seats.join(', ');
+            document.getElementById('show-date').textContent = showDate;
+            document.getElementById('show-time').textContent = showTime;
+
+            // Generate QR Code
+            const qrText = `${movieName} | Seats: ${seats.join(', ')} | Date: ${showDate} | Time: ${showTime}`;
+            new QRCode(document.getElementById('qrcode'), {
+                text: qrText,
+                width: 150,
+                height: 150,
+                colorDark : "#000000",
+                colorLight : "#ffffff",
+                correctLevel : QRCode.CorrectLevel.H
+            });
+        }
+
+        // Main execution
+        document.addEventListener('DOMContentLoaded', () => {
+            const params = getQueryParams();
+            displayBookingDetails(params);
+        });
+    </script>
+</body>
+</html>
