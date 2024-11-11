@@ -17,9 +17,9 @@ import threading
 import random
 
 app = Flask(__name__)
-# CORS(app, origins='http://188.166.223.224')  # Adjust the port if necessary
+CORS(app, origins='http://172.104.51.224')  # Adjust the port if necessary
 # CORS(app, origins='http://139.59.127.215')
-CORS(app, resources={r"/*": {"origins": "*"}})
+# CORS(app, resources={r"/*": {"origins": "*"}})
 socketio = SocketIO(app, cors_allowed_origins="*")  # Allow CORS for all origins
 
 app.secret_key = 'helloworld' 
@@ -1095,5 +1095,5 @@ def verify():
     return render_template('verify.html')
 
 if __name__ == "__main__":
-    socketio.run(app, host='192.168.110.45', port=5000)
+    socketio.run(app, host='0.0.0.0', port=5000)
     # socketio.run(app, host='0.0.0.0', port=5000, ssl_context=('/etc/ssl/private/selfsigned.crt', '/etc/ssl/private/selfsigned.key'))
