@@ -101,7 +101,8 @@
         }
 
         .seat.special {
-            background-color: #800080;
+            background-color: #00e444;
+            color: #000;
             /* Purple for special */
         }
 
@@ -487,6 +488,18 @@
             <div class="seat regular"></div>
             <span>Silver - Rp. 75,000</span>
         </div>
+        <div class="legend-item">
+            <div class="seat special"></div>
+            <span>Silver Sponsorship 500rb = 2 Seat VIP</span>
+        </div>
+        <div class="legend-item">
+            <div class="seat backseat"></div>
+            <span>Gold Sponsorship 1 juta = 4 seat VIP</span>
+        </div>
+        <div class="legend-item">
+            <div class="seat vvip"></div>
+            <span>Platinum Sponsorship 2.5 juta = 8 seat VIP</span>
+        </div>
     </div>
     <!-- Confirmation message moved above the button -->
     <div id="confirmation-message"></div>
@@ -536,7 +549,7 @@
         // JavaScript Code
         let userLoggedIn = false; // Track login state
 
-        // const baseURL = 'http://188.166.223.224:5000';
+        // const baseURL = 'http://139.59.127.215:5000';
         const baseURL = 'http://127.0.0.1:5000';
 
         // JavaScript Code
@@ -572,10 +585,10 @@
         const showTime = "19:00";
 
         const seatPrices = {
-            'vvip': 2000000,
-            'special': 1000000,
+            'vvip': 75000,
+            'special': 75000,
             'regular': 75000,
-            'backseat': 500000,
+            'backseat': 75000,
             'imam': 0
         };
 
@@ -592,9 +605,9 @@
 
         // Rows for different classes
         const imamRows = ['A'];
-        const vvipRows = ['B', 'C', 'D', 'E', 'F', 'G', 'H', 'I'];
-        const specialRows = ['J', 'K', 'L', 'M', 'N', 'O', 'P'];
-        const lastRow = ['R', 'Q']
+        const vvipRows = ['B', 'C', 'D', 'E', 'F', 'G'];
+        const specialRows = ['H', 'I', 'J', 'K'];
+        const lastRow = ['L', 'M', 'N']
         const backseatRows = specialRows;
 
         const allrowsame = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'R', 'Q'];
@@ -611,33 +624,33 @@
                 const seatNumber = parseInt(seat.match(/\d+/)[0]);
                 let seatClass = 'regular'; // Default class
 
-                // if (imamRows.includes(rowLetter)) {
-                //     if (seatNumber >= 8 && seatNumber <= 20) {
-                //         seatClass = 'imam';
-                //     } else {
-                //         seatClass = 'regular';
-                //     }
-                // } else if (vvipRows.includes(rowLetter)) {
-                //     if (seatNumber >= 8 && seatNumber <= 20) {
-                //         seatClass = 'vvip';
-                //     } else {
-                //         seatClass = 'regular';
-                //     }
-                // } else if (specialRows.includes(rowLetter)) {
-                //     if (seatNumber >= 8 && seatNumber <= 20) {
-                //         seatClass = 'special';
-                //     } else {
-                //         seatClass = 'backseat';
-                //     }
-                // } else if (lastRow.includes(rowLetter)) {
-                //     if (seatNumber >= 1 && seatNumber <= 13) {
-                //         seatClass = 'special';
-                //     } else {
-                //         seatClass = 'backseat';
-                //     }
-                // }
+                if (imamRows.includes(rowLetter)) {
+                    if (seatNumber >= 8 && seatNumber <= 20) {
+                        seatClass = 'imam';
+                    } else {
+                        seatClass = 'regular';
+                    }
+                } else if (vvipRows.includes(rowLetter)) {
+                    if (seatNumber >= 6 && seatNumber <= 25) {
+                        seatClass = 'vvip';
+                    } else {
+                        seatClass = 'regular';
+                    }
+                } else if (specialRows.includes(rowLetter)) {
+                    if (seatNumber >= 6 && seatNumber <= 25) {
+                        seatClass = 'backseat';
+                    } else {
+                        seatClass = 'regular';
+                    }
+                } else if (lastRow.includes(rowLetter)) {
+                    if (seatNumber >= 6 && seatNumber <= 25) {
+                        seatClass = 'special';
+                    } else {
+                        seatClass = 'regular';
+                    }
+                }
                 
-                seatClass = 'regular';
+                // seatClass = 'regular';
                 return { label: seat, class: seatClass };
             });
         });
@@ -1192,7 +1205,7 @@
         function getSeatColor(seatClass) {
             const colorMap = {
                 'vvip': 'MERAH',    // Red
-                'special': 'UNGU',  // Purple
+                'special': 'HIJAU',  // Purple
                 'regular': 'BIRU', // Green
                 'backseat': 'KUNING', // Yellow
                 'imam': 'ORANGE'
