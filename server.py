@@ -453,7 +453,7 @@ def book():
             'TGL JUAL': tgl_JUAL,
             #'TGL BAYAR': tgl_bayar,
             #'LUNAS': lunas_status,
-            'AMOUNT': booking.get('Amount', 0),
+            # 'AMOUNT': booking.get('Amount', 0),
             'PIC': username,  # Use the username from the request data
             #'GELANG': booking.get('Gelang', ''),
             'KET': ticket_id,
