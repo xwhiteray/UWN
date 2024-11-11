@@ -805,8 +805,14 @@ def show_ticket(ticket_id):
 
 users = [
     {'username': 'aditya', 'password': '123123123', 'name' : 'Aditya Dharmaputra W', 'phone' : '085320602318'},
-    {'username': 'rivan', 'password': '123123123', 'name' : 'Rivan Tandiari', 'phone' : ''},
-     {'username': 'silvia', 'password': '123123123', 'name' : 'Fredy Horas', 'phone' : ''},
+    {'username': 'rivan', 'password': '123123123', 'name' : 'Rivan Tandiari', 'phone' : '081355678777'},
+    {'username': 'Evie', 'password': '12345678', 'name' : 'Evie Asvianty', 'phone' : '08194177993'},
+    {'username': 'NellyHt', 'password': '5858', 'name' : 'Evie Asvianty', 'phone' : '081355572999'},
+    {'username': 'Lusyana', 'password': 'Jemmy88', 'name' : 'Lusyana', 'phone' : '081343933800'},
+    {'username': 'CR', 'password': '112233', 'name' : 'Erny Widjaja', 'phone' : '08114533476'},
+    {'username': 'Rey', 'password': 'ymsby18', 'name' : 'Reynaldi S', 'phone' : '082292931177'},
+    {'username': 'yenni', 'password': '999999', 'name' : 'Yenni Ng', 'phone' : '08124271111'},
+    {'username': 'Silvia', 'password': 'ABC123456', 'name' : 'Silvia Ira Wijaya', 'phone' : '0811460369'},
 ]
 
 @app.route('/login', methods=['POST'])

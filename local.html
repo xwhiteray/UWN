@@ -472,7 +472,7 @@
 </head>
 
 <body>
-    <h1>OPERA KOMEDI SAMADI Ticket Booking</h1>
+    <h1>WORSHIP NIGHT Ticket Booking</h1>
     <!-- Seat map container -->
     <div id="seat-map-container">
         <div id="seat-map">
@@ -485,23 +485,19 @@
     <div class="legend">
         <div class="legend-item">
             <div class="seat regular"></div>
-            <span>Bronze - Rp. 750,000</span>
-        </div>
-        <div class="legend-item">
-            <div class="seat imam"></div>
-            <span>Imam - Free</span>
+            <span>Silver - Rp. 75,000</span>
         </div>
         <div class="legend-item">
             <div class="seat special"></div>
-            <span>Silver - Rp. 1,000,000</span>
+            <span>Silver Sponsorship 500rb = 2 Seat VIP</span>
         </div>
         <div class="legend-item">
             <div class="seat backseat"></div>
-            <span>Gold - Rp. 500,000</span>
+            <span>Gold Sponsorship 1 juta = 4 seat VIP</span>
         </div>
         <div class="legend-item">
             <div class="seat vvip"></div>
-            <span>Platinum - Rp. 2,000,000</span>
+            <span>Platinum Sponsorship 2.5 juta = 8 seat VIP</span>
         </div>
     </div>
     <!-- Confirmation message moved above the button -->
@@ -552,7 +548,7 @@
         // JavaScript Code
         let userLoggedIn = false; // Track login state
 
-        const baseURL = 'http://188.166.223.224:5000';
+        const baseURL = 'http://172.104.51.224:5000';
 
         // JavaScript Code
         const seatMap = [
@@ -587,10 +583,10 @@
         const showTime = "19:00";
 
         const seatPrices = {
-            'vvip': 2000000,
-            'special': 1000000,
-            'regular': 750000,
-            'backseat': 500000,
+            'vvip': 312500,
+            'special': 250000,
+            'regular': 75000,
+            'backseat': 250000,
             'imam': 0
         };
 
@@ -607,10 +603,12 @@
 
         // Rows for different classes
         const imamRows = ['A'];
-        const vvipRows = ['B', 'C', 'D', 'E', 'F', 'G', 'H', 'I'];
-        const specialRows = ['J', 'K', 'L', 'M', 'N', 'O', 'P'];
-        const lastRow = ['R', 'Q']
+        const vvipRows = ['B', 'C', 'D', 'E', 'F', 'G'];
+        const specialRows = ['H', 'I', 'J', 'K'];
+        const lastRow = ['L', 'M', 'N']
         const backseatRows = specialRows;
+
+        const allrowsame = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'R', 'Q'];
 
         // Reverse the seat map to reflect the new orientation
         const reversedSeatMap = seatMap.slice().reverse();
@@ -631,25 +629,26 @@
                         seatClass = 'regular';
                     }
                 } else if (vvipRows.includes(rowLetter)) {
-                    if (seatNumber >= 8 && seatNumber <= 20) {
+                    if (seatNumber >= 6 && seatNumber <= 25) {
                         seatClass = 'vvip';
                     } else {
                         seatClass = 'regular';
                     }
                 } else if (specialRows.includes(rowLetter)) {
-                    if (seatNumber >= 8 && seatNumber <= 20) {
-                        seatClass = 'special';
-                    } else {
+                    if (seatNumber >= 6 && seatNumber <= 25) {
                         seatClass = 'backseat';
+                    } else {
+                        seatClass = 'regular';
                     }
                 } else if (lastRow.includes(rowLetter)) {
-                    if (seatNumber >= 1 && seatNumber <= 13) {
+                    if (seatNumber >= 6 && seatNumber <= 25) {
                         seatClass = 'special';
                     } else {
-                        seatClass = 'backseat';
+                        seatClass = 'regular';
                     }
                 }
 
+                // seatClass = 'regular';
                 return { label: seat, class: seatClass };
             });
         });
