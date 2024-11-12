@@ -814,6 +814,7 @@ users = [
     {'username': 'yenni', 'password': '999999', 'name' : 'Yenni Ng', 'phone' : '628124271111'},
     {'username': 'Silvia', 'password': 'ABC123456', 'name' : 'Silvia Ira Wijaya', 'phone' : '62811460369'},
     {'username': 'lily', 'password': 'dgtompo15', 'name' : 'Lily', 'phone' : '628114182805'},
+    {'username': 'Mey123', 'password': 'Happym3y', 'name' : 'Mey', 'phone' : '6289665640212'},
 ]
 
 @app.route('/login', methods=['POST'])
