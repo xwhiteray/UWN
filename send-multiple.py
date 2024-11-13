@@ -259,7 +259,7 @@ def process_send_queue(driver, worksheet):
             # Download all images for this phone number
             image_paths = []
             for image_id in image_ids:
-                image_url = f"http://139.59.127.215/ticket/{image_id}.png"
+                image_url = f"http://172.104.51.224/ticket/{image_id}.png"
                 image_name = f"{image_id}.png"
                 image_path = os.path.join(os.getcwd(), image_name)
                 downloaded_image = download_image(image_url, image_path)
