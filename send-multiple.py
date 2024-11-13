@@ -11,6 +11,7 @@ from selenium.webdriver.chrome.options import Options
 import time
 import os
 import requests
+import random
 
 # ----------------------- Google Sheets Setup -----------------------
 
@@ -130,6 +131,14 @@ def send_whatsapp_image(driver, phone_number, image_path, caption=""):
         print(f"Failed to send image to {phone_number}: {e}")
         return False
 
+def random_delay(min_seconds=1, max_seconds=5):
+    time.sleep(random.uniform(min_seconds, max_seconds))
+
+def type_with_delay(element, text):
+    for char in text:
+        element.send_keys(char)
+        time.sleep(random.uniform(0.05, 0.3))  # Random delay between keystrokes
+
 def send_whatsapp_images(driver, phone_number, image_paths, caption=""):
     """
     Sends multiple images via WhatsApp Web to the specified phone number with an optional caption.
@@ -168,12 +177,21 @@ def send_whatsapp_images(driver, phone_number, image_paths, caption=""):
         time.sleep(10)
         
         if caption:
+            captions = [
+                "*Terima Kasih Telah Membeli Tiket untuk Unity in Worship Night: RETOUCH!*",
+                "Terima kasih telah menjadi bagian dari perjalanan ini untuk memperdalam iman kita. Kami tidak sabar untuk bertemu dengan Anda! *Tim Unity in Worship Night*",
+                "Jangan lupa membawa tiket digital yang telah dikirimkan melalui WhatsApp sebagai bukti masuk. *Tim Unity in Worship Night*"
+            ]
+
+            caption_text = random.choice(captions)
+
             # Find the caption box and enter the caption
             caption_xpath = '//div[@contenteditable="true"][@data-tab="10"]'
             caption_boxes = driver.find_elements(By.XPATH, caption_xpath)
             # If multiple images, the last caption box corresponds to the last image
             for caption_box in caption_boxes:
-                caption_box.send_keys(caption)
+                # caption_box.send_keys(caption_text)
+                type_with_delay(caption_box, caption_text)
             print("Added caption to the images.")
         
         # Click the send button
