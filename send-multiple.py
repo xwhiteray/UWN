@@ -47,8 +47,10 @@ def initialize_driver():
     """
     
     # chrome_options.add_argument("--headless")  # Uncomment to run in headless mode (no GUI)
-
-    driver = webdriver.Chrome(service=Service(ChromeDriverManager().install()))
+    chrome_options = Options()
+    #chrome_options.add_argument("--headless")  # Run Chrome in headless mode
+    chrome_options.add_argument("--no-sandbox")  # Bypass OS security model
+    driver = webdriver.Chrome(service=Service(ChromeDriverManager().install()), options=chrome_options)
     return driver
 
 # ----------------------- Utility Functions -----------------------
