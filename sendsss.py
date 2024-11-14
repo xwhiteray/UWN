@@ -49,7 +49,10 @@ def initialize_driver():
     
     # chrome_options.add_argument("--headless")  # Uncomment to run in headless mode (no GUI)
 
-    driver = webdriver.Chrome(service=Service(ChromeDriverManager().install()))
+    chrome_options = Options()
+    #chrome_options.add_argument("--headless")  # Run Chrome in headless mode
+    chrome_options.add_argument("--no-sandbox")  # Bypass OS security model
+    driver = webdriver.Chrome(service=Service(ChromeDriverManager().install()), options=chrome_options)
     return driver
 
 # ----------------------- Utility Functions -----------------------
@@ -149,7 +152,7 @@ def send_whatsapp_images(driver, phone_number, image_paths, caption="1"):
 
     try:
         # Wait until the chat interface loads
-        chat_xpath = '//div[@contenteditable="true"][@data-tab="10"]'
+        chat_xpath = '//div[@contenteditable="true"][@data-tab="3"]'
         WebDriverWait(driver, 30).until(
             EC.presence_of_element_located((By.XPATH, chat_xpath))
         )
@@ -180,23 +183,23 @@ def send_whatsapp_images(driver, phone_number, image_paths, caption="1"):
         # Wait for the image previews to appear
         time.sleep(10)
 
-        if caption:
-            captions = [
-                "*Terima Kasih Telah Membeli Tiket untuk Unity in Worship Night: RETOUCH!*",
-                "Terima kasih telah menjadi bagian dari perjalanan ini untuk memperdalam iman kita. Kami tidak sabar untuk bertemu dengan Anda! *Tim Unity in Worship Night*",
-                "Jangan lupa membawa tiket digital yang telah dikirimkan melalui WhatsApp sebagai bukti masuk. *Tim Unity in Worship Night*"
-            ]
+        # if caption:
+        #     captions = [
+        #         "*Terima Kasih Telah Membeli Tiket untuk Unity in Worship Night: RETOUCH!*",
+        #         "Terima kasih telah menjadi bagian dari perjalanan ini untuk memperdalam iman kita. Kami tidak sabar untuk bertemu dengan Anda! *Tim Unity in Worship Night*",
+        #         "Jangan lupa membawa tiket digital yang telah dikirimkan melalui WhatsApp sebagai bukti masuk. *Tim Unity in Worship Night*"
+        #     ]
 
-            caption_text = random.choice(captions)
+        #     caption_text = random.choice(captions)
 
-            # Find the caption box and enter the caption
-            caption_xpath = '//div[@contenteditable="true"][@aria-placeholder="Add a caption"]'
-            caption_boxes = driver.find_elements(By.XPATH, caption_xpath)
-            # If multiple images, the last caption box corresponds to the last image
-            for caption_box in caption_boxes:
-                type_with_delay(caption_box, caption_text)
+        #     # Find the caption box and enter the caption
+        #     caption_xpath = '//div[@contenteditable="true"][@aria-placeholder="Add a caption"]'
+        #     caption_boxes = driver.find_elements(By.XPATH, caption_xpath)
+        #     # If multiple images, the last caption box corresponds to the last image
+        #     for caption_box in caption_boxes:
+        #         type_with_delay(caption_box, caption_text)
                 
-            print("Added caption to the images.")
+        #     print("Added caption to the images.")
 
         # Click the send button
         send_button_xpath = '//span[@data-icon="send"]'
