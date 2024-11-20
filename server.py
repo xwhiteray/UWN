@@ -826,7 +826,7 @@ users = [
     {'username': 'Yasin Thamrin', 'password': '55555', 'name' : 'Yasin Thamrin', 'phone' : '628124242345'},
     {'username': 'Vivi Iwawo', 'password': '55555', 'name' : 'Vivi Iwawo', 'phone' : '628114065686'},
     {'username': 'Jemmy Jonta', 'password': '55555', 'name' : 'Jemmy Jonta', 'phone' : '628124123800'},
-    {'username': 'Mery W', 'password': '55555', 'name' : 'Fira', 'phone' : '6287841498999'},
+    {'username': 'Mery W', 'password': '55555', 'name' : 'Mery W', 'phone' : '6287841498999'},
     {'username': 'Anton Sedjie', 'password': '55555', 'name' : 'Anton Sedjie', 'phone' : '6282322900700'},
     {'username': 'Rosmini', 'password': '55555', 'name' : 'Rosmini', 'phone' : '628124150025'},
     {'username': 'Feby', 'password': '55555', 'name' : 'Feby', 'phone' : '6285255404555'},
