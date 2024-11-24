@@ -647,7 +647,7 @@ def classify_seat(seat):
             seat_class = 'blue'
     elif row_letter in vvipRows:
         if 6 <= seat_number <= 25:
-            seat_class = 'red'
+            seat_class = 'yellow'
         else:
             seat_class = 'blue'
     elif row_letter in specialRows:

@@ -159,7 +159,7 @@ def send_whatsapp_images(driver, phone_number, image_paths, caption="1"):
         print(f"Chat loaded successfully for {phone_number}")
 
         # Click on the attachment (paperclip) icon
-        attachment_xpath = '//div[@title="Attach"]'
+        attachment_xpath = '//button[@title="Attach"]'
         attachment_box = WebDriverWait(driver, 30).until(
             EC.element_to_be_clickable((By.XPATH, attachment_xpath))
         )
@@ -182,24 +182,6 @@ def send_whatsapp_images(driver, phone_number, image_paths, caption="1"):
 
         # Wait for the image previews to appear
         time.sleep(10)
-
-        # if caption:
-        #     captions = [
-        #         "*Terima Kasih Telah Membeli Tiket untuk Unity in Worship Night: RETOUCH!*",
-        #         "Terima kasih telah menjadi bagian dari perjalanan ini untuk memperdalam iman kita. Kami tidak sabar untuk bertemu dengan Anda! *Tim Unity in Worship Night*",
-        #         "Jangan lupa membawa tiket digital yang telah dikirimkan melalui WhatsApp sebagai bukti masuk. *Tim Unity in Worship Night*"
-        #     ]
-
-        #     caption_text = random.choice(captions)
-
-        #     # Find the caption box and enter the caption
-        #     caption_xpath = '//div[@contenteditable="true"][@aria-placeholder="Add a caption"]'
-        #     caption_boxes = driver.find_elements(By.XPATH, caption_xpath)
-        #     # If multiple images, the last caption box corresponds to the last image
-        #     for caption_box in caption_boxes:
-        #         type_with_delay(caption_box, caption_text)
-                
-        #     print("Added caption to the images.")
 
         # Click the send button
         send_button_xpath = '//span[@data-icon="send"]'
