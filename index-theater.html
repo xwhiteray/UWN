@@ -1064,6 +1064,7 @@
             // Prepare WhatsApp number by adding '+62' to the phone number
             let whatsappNumber = phoneNumber.replace(/\D/g, ''); // Remove non-digit characters
             whatsappNumber = whatsappNumber.replace(/^0+/, '');   // Remove leading zeros
+            whatsappNumber = whatsappNumber.replace(/^62+/, '');  // **Remove leading '62'**
             whatsappNumber = '62' + whatsappNumber;             // Add '+62' prefix
 
             // Set booking status to 'SOLD' automatically
