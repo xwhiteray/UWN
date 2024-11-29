@@ -641,7 +641,7 @@ def classify_seat(seat):
     
     # Determine seat class based on row and seat number
     if row_letter in imamRows:
-        if 8 <= seat_number <= 20:
+        if 8 <= seat_number <= 16:
             seat_class = 'red'
         else:
             seat_class = 'blue'
@@ -652,7 +652,7 @@ def classify_seat(seat):
             seat_class = 'blue'
     elif row_letter in specialRows:
         if 6 <= seat_number <= 25:
-            seat_class = 'blue'
+            seat_class = 'yellow'
         else:
             seat_class = 'blue'
     elif row_letter in lastRow:

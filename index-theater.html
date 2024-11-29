@@ -625,7 +625,7 @@
                 let seatClass = 'regular'; // Default class
 
                 if (imamRows.includes(rowLetter)) {
-                    if (seatNumber >= 8 && seatNumber <= 20) {
+                    if (seatNumber >= 8 && seatNumber <= 16) {
                         seatClass = 'imam';
                     } else {
                         seatClass = 'regular';
@@ -639,7 +639,7 @@
                     }
                 } else if (specialRows.includes(rowLetter)) {
                     if (seatNumber >= 6 && seatNumber <= 25) {
-                        seatClass = 'regular';
+                        seatClass = 'backseat';
                     } else {
                         seatClass = 'regular';
                     }
