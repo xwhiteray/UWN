@@ -657,7 +657,7 @@ def classify_seat(seat):
             seat_class = 'blue'
     elif row_letter in lastRow:
         if 6 <= seat_number <= 25:
-            seat_class = 'green'
+            seat_class = 'blue'
         else:
             seat_class = 'blue'
     elif row_letter in moreRow:
