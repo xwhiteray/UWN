@@ -631,15 +631,15 @@
                         seatClass = 'regular';
                     }
                 } else if (vvipRows.includes(rowLetter)) {
-                    if (seatNumber >= 6 && seatNumber <= 25) {
+                    if (seatNumber >= 6 && seatNumber <= 11) {
                         seatClass = 'vvip';
-                        // seatClass = 'backseat';
+                        //seatClass = 'backseat';
                     } else {
-                        seatClass = 'regular';
+                        seatClass = 'backseat';
                     }
                 } else if (specialRows.includes(rowLetter)) {
                     if (seatNumber >= 6 && seatNumber <= 25) {
-                        seatClass = 'backseat';
+                        seatClass = 'vvip';
                     } else {
                         seatClass = 'regular';
                     }
