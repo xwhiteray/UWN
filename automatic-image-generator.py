@@ -198,7 +198,8 @@ def generate_ticket_image(id, qr_data, buyer_name, seller_name, seat_label):
         # draw.text(text_position, seat_label, font=ImageFont.truetype(font_path, size=45), fill="black")
 
         # Define the output directory
-        output_dir = 'ticket'
+        output_dir = seller_name.replace(":", "")
+        # output_dir = 'ticket'
 
         # Create the directory if it doesn't exist
         if not os.path.exists(output_dir):

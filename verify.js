@@ -1,8 +1,11 @@
 // Define the base URL of your server
-const baseURL = 'https://157.245.59.135:5000';
+const baseURL = 'https://172.104.41.186:5000';
+// const baseURL = 'http://localhost:5000'
 
 // Create an instance of Html5Qrcode
 const html5QrCode = new Html5Qrcode("qr-reader");
+
+let miniCards = [];
 
 // Define the scan callbacks
 const qrCodeSuccessCallback = (decodedText, decodedResult) => {
@@ -47,8 +50,8 @@ document.getElementById('scan-button').addEventListener('click', startScanning);
 // Function to send a request to give Gelang
 function giveGelang(transactionId, buttonElement) {
     // Optionally, confirm the action with the user
-    const confirmAction = confirm(`Are you sure you want to mark GELANG as "Yes" for Transaction ID: ${transactionId}?`);
-    if (!confirmAction) return;
+    // const confirmAction = confirm(`Are you sure you want to mark GELANG as "Yes" for Transaction ID: ${transactionId}?`);
+    // if (!confirmAction) return;
 
     // Disable the button to prevent multiple clicks
     buttonElement.disabled = true;
@@ -68,26 +71,96 @@ function giveGelang(transactionId, buttonElement) {
         },
         body: JSON.stringify(payload)
     })
-    .then(response => response.json())
-    .then(data => {
-        if (data.success) {
-            alert(data.message);
-            // Optionally, update the GELANG cell in the table to "Yes"
-            updateGelangStatusInTable(transactionId);
-            buttonElement.textContent = 'Gelang Given';
-        } else {
-            alert(`Failed to give Gelang: ${data.message}`);
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                // alert(data.message);
+                // Optionally, update the GELANG cell in the table to "Yes"
+                updateGelangStatusInTable(transactionId);
+                buttonElement.textContent = 'Gelang Given';
+
+                // Create a mini card
+                let color = buttonElement.dataset.color;
+                let seats = buttonElement.dataset.seats;
+
+                let miniCard = {
+                    color: color,
+                    seats: seats
+                };
+
+                // Add the mini card to the array
+                miniCards.push(miniCard);
+
+                // Render the mini cards
+                renderMiniCard(miniCard);
+
+                // Start scanning again automatically
+                startScanning();
+
+                // Hide the "Scan Again" button if it's visible
+                const scanButton = document.getElementById('scan-button');
+                scanButton.style.display = 'none';
+            } else {
+                alert(`Failed to give Gelang: ${data.message}`);
+                buttonElement.disabled = false;
+                buttonElement.textContent = 'Give Gelang';
+            }
+        })
+        .catch(error => {
+            console.error('Error giving Gelang:', error);
+            alert('An error occurred while giving Gelang.');
             buttonElement.disabled = false;
             buttonElement.textContent = 'Give Gelang';
-        }
-    })
-    .catch(error => {
-        console.error('Error giving Gelang:', error);
-        alert('An error occurred while giving Gelang.');
-        buttonElement.disabled = false;
-        buttonElement.textContent = 'Give Gelang';
-    });
+        });
 }
+
+function renderMiniCard(card) {
+    let miniCardsContainer = document.getElementById('mini-cards-container');
+    if (!miniCardsContainer) {
+        miniCardsContainer = document.createElement('div');
+        miniCardsContainer.id = 'mini-cards-container';
+        // Append to resultDiv
+        const resultDiv = document.getElementById('result');
+        resultDiv.appendChild(miniCardsContainer);
+    }
+
+    const cardDiv = document.createElement('div');
+    cardDiv.className = 'mini-card';
+
+    const colorIndicator = document.createElement('div');
+    colorIndicator.className = 'color-indicator';
+    let color = '';
+    if (card.color == 'UNGU') {
+        color = 'purple';
+    } else if (card.color == 'MERAH') {
+        color = 'red';
+    } else if (card.color == 'HIJAU') {
+        color = 'green';
+    } else {
+        color = 'yellow';
+    }
+
+    colorIndicator.style.backgroundColor = color;
+
+    const cardContent = document.createElement('div');
+    cardContent.className = 'card-content';
+
+    const colorText = document.createElement('div');
+    colorText.textContent = `Color: ${card.color}`;
+
+    const seatsText = document.createElement('div');
+    seatsText.textContent = `Seats: ${card.seats}`;
+
+    cardContent.appendChild(colorText);
+    cardContent.appendChild(seatsText);
+
+    cardDiv.appendChild(colorIndicator);
+    cardDiv.appendChild(cardContent);
+
+    // Prepend the new card to the container
+    miniCardsContainer.insertBefore(cardDiv, miniCardsContainer.firstChild);
+}
+
 
 // Function to update the GELANG status in the table without refreshing
 function updateGelangStatusInTable(transactionId) {
@@ -135,25 +208,25 @@ function verifyTransaction(transactionId) {
         },
         body: JSON.stringify({ transaction_id: transactionId })
     })
-    .then(response => response.json())
-    .then(data => {
-        if (data.success) {
-            // Transaction is valid
-            resultDiv.textContent = '';
-            resultDiv.className = 'success';
-            // Display the transaction details
-            displayTransactionDetails(data.details);
-        } else {
-            // Transaction is invalid
-            resultDiv.textContent = `Verification failed: ${data.message}`;
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                // Transaction is valid
+                resultDiv.textContent = '';
+                resultDiv.className = 'success';
+                // Display the transaction details
+                displayTransactionDetails(data.details);
+            } else {
+                // Transaction is invalid
+                resultDiv.textContent = `Verification failed: ${data.message}`;
+                resultDiv.className = 'failure';
+            }
+        })
+        .catch(error => {
+            console.error('Error verifying transaction:', error);
+            resultDiv.textContent = 'An error occurred during verification.';
             resultDiv.className = 'failure';
-        }
-    })
-    .catch(error => {
-        console.error('Error verifying transaction:', error);
-        resultDiv.textContent = 'An error occurred during verification.';
-        resultDiv.className = 'failure';
-    });
+        });
 }
 
 // Function to display the transaction details in a table
@@ -210,6 +283,7 @@ function displayTransactionDetails(details) {
             }
 
             td.textContent = cellValue;
+            td.setAttribute('data-label', header); // Add data-label attribute
             row.appendChild(td);
         });
 
@@ -219,7 +293,12 @@ function displayTransactionDetails(details) {
         giveGelangButton.textContent = 'Give Gelang';
         giveGelangButton.className = 'give-gelang-button';
         giveGelangButton.dataset.transactionId = detail['KET'];  // Assuming 'KET' is the unique ID
+
+        // Add data attributes for color and seats
+        giveGelangButton.dataset.color = detail['WARNA'] || 'blue'; // Default color
+        giveGelangButton.dataset.seats = detail['BARIS'] + detail['NO KURSI'] || '1';    // Default seats
         actionTd.appendChild(giveGelangButton);
+        actionTd.setAttribute('data-label', 'Action'); // Add data-label attribute
         row.appendChild(actionTd);
 
         tbody.appendChild(row);
@@ -236,9 +315,9 @@ function displayTransactionDetails(details) {
     const resultDiv = document.getElementById('result');
 
     // Remove any existing table before appending a new one
-    const existingTable = document.getElementById('transaction-table');
-    if (existingTable) {
-        existingTable.remove();
+    const existingTableContainer = resultDiv.querySelector('.table-container');
+    if (existingTableContainer) {
+        existingTableContainer.remove();
     }
 
     resultDiv.appendChild(container);

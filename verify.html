@@ -12,7 +12,6 @@
         crossorigin="anonymous" referrerpolicy="no-referrer" />
     <style>
         /* Reset some default styles */
-        /* Reset some default styles */
         * {
             margin: 0;
             padding: 0;
@@ -78,20 +77,21 @@
             border: 1px solid #f5c6cb;
         }
 
-        /* Styles for the table */
+        /* Styles for the table container */
         .table-container {
             width: 100%;
             overflow-x: auto;
-            /* Allow horizontal scrolling */
+            -webkit-overflow-scrolling: touch;
+            /* Enable smooth scrolling on iOS */
             margin: 20px 0;
-            /* Spacing above and below the table */
         }
 
         /* Styles for the table */
         #transaction-table {
-            border-collapse: collapse;
             width: 100%;
-            max-width: 800px;
+            border-collapse: collapse;
+            table-layout: auto;
+            /* Allow the table to adjust column widths automatically */
             background-color: #fff;
             border-radius: 10px;
             overflow: hidden;
@@ -100,21 +100,20 @@
 
         #transaction-table th,
         #transaction-table td {
-            border: 1px solid #ddd;
             padding: 12px 15px;
-            white-space: nowrap;
-            /* Prevent text wrapping */
+            text-align: left;
+            word-wrap: break-word;
+            /* Allow long words to break and wrap to the next line */
+            border: 1px solid #ddd;
         }
 
         #transaction-table th {
             background-color: #4CAF50;
             color: white;
-            text-align: center;
             font-size: 1rem;
         }
 
         #transaction-table td {
-            text-align: center;
             font-size: 0.9rem;
             color: #555;
         }
@@ -127,46 +126,66 @@
 
             header p {
                 font-size: 0.9rem;
-                /* Smaller font for mobile */
             }
 
             #result {
                 font-size: 1.2rem;
                 padding: 8px 15px;
-                /* Adjust padding for mobile */
             }
 
+            /* Responsive table styles */
+            #transaction-table,
+            #transaction-table thead,
+            #transaction-table tbody,
             #transaction-table th,
+            #transaction-table td,
+            #transaction-table tr {
+                display: block;
+            }
+
+            #transaction-table tr {
+                margin-bottom: 15px;
+                border: 1px solid #ddd;
+                border-radius: 5px;
+                padding: 10px;
+            }
+
+            #transaction-table th {
+                display: none;
+            }
+
             #transaction-table td {
-                padding: 8px;
-                /* Smaller padding for mobile */
-                font-size: 0.8rem;
-                /* Smaller font for mobile */
+                display: block;
+                text-align: right;
+                position: relative;
+                padding-left: 50%;
+                border: none;
+                border-bottom: 1px solid #ddd;
             }
 
-            #transaction-table {
-                font-size: 0.9rem;
-                /* Adjust font size for mobile */
+            #transaction-table td:before {
+                content: attr(data-label);
+                position: absolute;
+                left: 15px;
+                width: 45%;
+                padding-right: 10px;
+                white-space: nowrap;
+                text-align: left;
+                font-weight: bold;
             }
 
-            /* QR reader box responsive */
-            #qr-reader {
-                width: 90%;
-                /* Wider on mobile */
-                margin: 20px 0;
-                /* Add spacing */
+            /* Adjust padding for the last td (Action button) */
+            #transaction-table td:last-child {
+                padding-bottom: 20px;
             }
 
             .btn {
                 padding: 8px 15px;
-                /* Smaller padding for buttons on mobile */
                 font-size: 0.9rem;
-                /* Smaller font size for buttons */
             }
 
             footer {
                 font-size: 0.8rem;
-                /* Smaller footer text */
             }
         }
 
@@ -222,14 +241,25 @@
             text-decoration: underline;
         }
 
-        .table-container {
-            width: 100%;
-            max-width: 800px;
-            /* Limit the maximum width */
-            overflow-x: auto;
-            /* Allow horizontal scrolling */
-            margin: 20px 0;
-            /* Spacing above and below the table */
+        .mini-card {
+            display: flex;
+            align-items: center;
+            border: 1px solid #ddd;
+            padding: 15px;
+            margin: 10px 0;
+            border-radius: 5px;
+            background-color: #fff;
+        }
+
+        .color-indicator {
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            margin-right: 15px;
+        }
+
+        .card-content {
+            flex-grow: 1;
         }
     </style>
 </head>
@@ -244,9 +274,10 @@
     <div id="qr-reader"></div>
     <div id="result"></div>
     <button id="scan-button" class="btn" style="display: none;">Scan Again</button>
+    <div id="mini-cards-container"></div>
 
     <footer>
-        &copy; 2024 Opera Komedi Samadi. All rights reserved.
+        &copy; 2024 FIDEI. All rights reserved.
     </footer>
 
     <!-- Include the QR code scanning library -->
