@@ -77,7 +77,7 @@ function giveGelang(transactionId, buttonElement) {
                 // alert(data.message);
                 // Optionally, update the GELANG cell in the table to "Yes"
                 updateGelangStatusInTable(transactionId);
-                buttonElement.textContent = 'Gelang Given';
+                buttonElement.textContent = 'Hadir';
 
                 // Create a mini card
                 let color = buttonElement.dataset.color;
