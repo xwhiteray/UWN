@@ -49,10 +49,17 @@ def truncate_text(text, font, max_width):
 
 def classify_seat(seat):
     imamRows = ['A']
-    vvipRows = ['B', 'C', 'D', 'E', 'F', 'G']
+    vvipRows = ['G']
     specialRows = ['H', 'I', 'J', 'K']
-    lastRow = ['L', 'M', 'N']
+    lastRow = ['L']
     moreRow = ['O', 'P', 'Q', 'R']
+    rowb = ['B']
+    rowc = ['C']
+    rowd = ['D']
+    rowe = ['E']
+    rowf = ['F']
+    rowm = ['M']
+    rown = ['N']
 
     # Extract row letter and seat number
     row_letter = ''.join(filter(str.isalpha, seat))
@@ -63,18 +70,79 @@ def classify_seat(seat):
     
     # Determine seat class based on row and seat number
     if row_letter in imamRows:
-        if 8 <= seat_number <= 20:
+        if 8 <= seat_number <= 16:
             seat_class = 'red'
+        elif 17 <= seat_number <= 20:
+            seat_class = 'blue'
+        else:
+            seat_class = 'blue'
+    elif row_letter in rowb:
+        if 6 <= seat_number <= 21:
+            seat_class = 'red'
+        elif 22 <= seat_number <= 25 :
+            seat_class = 'yellow'
+        else:
+            seat_class = 'blue'
+    elif row_letter in rowc:
+        if 6 <= seat_number <= 9:
+            seat_class = 'yellow'
+        elif 10 <= seat_number <= 25:
+            seat_class = 'red'
+        else:
+            seat_class = 'blue'
+    elif row_letter in rowd:
+        if 6 <= seat_number <= 21:
+            seat_class = 'red'
+        elif 22 <= seat_number <= 25:
+            seat_class = 'yellow'
+        else:
+            seat_class = 'blue'
+    elif row_letter in rowe:
+        if 6 <= seat_number <= 7:
+            seat_class = 'yellow'
+        elif 10 <= seat_number <= 15:
+            seat_class = 'red'
+        elif 16 <= seat_number <= 17:
+            seat_class = 'yellow'
+        elif 18 <= seat_number <= 25:
+            seat_class = 'red'
+        else:
+            seat_class = 'blue'
+    elif row_letter in rowf:
+        if 6 <= seat_number <= 21:
+            seat_class = 'red'
+        if 22 <= seat_number <= 25:
+            seat_class = 'yellow'
         else:
             seat_class = 'blue'
     elif row_letter in vvipRows:
-        if 6 <= seat_number <= 25:
+        if 6 <= seat_number <= 9:
+            seat_class = 'yellow'
+        elif 10 == seat_number:
+            seat_class = 'red'
+        elif 11 == seat_number:
+            seat_class = 'yellow'
+        if 12 <= seat_number <= 25:
             seat_class = 'red'
         else:
-            seat_class = 'blue'
+           seat_class = 'blue' 
     elif row_letter in specialRows:
         if 6 <= seat_number <= 25:
             seat_class = 'yellow'
+        else:
+            seat_class = 'blue'
+    elif row_letter in rowm:
+        if 6 <= seat_number <= 23:
+            seat_class = 'green'
+        else:
+            seat_class = 'blue'
+    elif row_letter in rown:
+        if 6 <= seat_number <= 19:
+            seat_class = 'green'
+        elif 20 <= seat_number <= 21:
+            seat_class = 'blue'
+        elif 22 <= seat_number <= 25:
+            seat_class = 'green'
         else:
             seat_class = 'blue'
     elif row_letter in lastRow:
@@ -84,10 +152,12 @@ def classify_seat(seat):
             seat_class = 'blue'
     elif row_letter in moreRow:
         seat_class = 'blue'
+    else:
+        seat_class = 'blue'
     
     return seat_class
 
-def generate_ticket_image(id, qr_data, buyer_name, seller_name, seat_label):
+def generate_ticket_image(id, qr_data, buyer_name, seller_name, seat_label, no_hp):
     """
     Generates a ticket image with specified details and returns the path to the saved image.
 
@@ -198,7 +268,8 @@ def generate_ticket_image(id, qr_data, buyer_name, seller_name, seat_label):
         # draw.text(text_position, seat_label, font=ImageFont.truetype(font_path, size=45), fill="black")
 
         # Define the output directory
-        output_dir = seller_name.replace(":", "")
+        # output_dir = seller_name.replace(":", "")
+        output_dir = "ticket/" + no_hp
         # output_dir = 'ticket'
 
         # Create the directory if it doesn't exist
@@ -274,7 +345,7 @@ def verify_transaction():
             pic = "PIC : " + row_data['PIC']
             if(row_data['PIC'] == ""):
                 pic = "By OKS TEAM"
-            generate_ticket_image(row_data['KET'], row_data['KET'], row_data['NAMA'], pic, row_data['BARIS'] + row_data['NO KURSI'])
+            generate_ticket_image(row_data['KET'], row_data['KET'], row_data['NAMA'], pic, row_data['BARIS'] + row_data['NO KURSI'], row_data['NO HP'])
 
 def exc_csv():
     # Fetch the headers from the sheet (read operation)

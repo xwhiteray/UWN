@@ -130,14 +130,14 @@ function renderMiniCard(card) {
     const colorIndicator = document.createElement('div');
     colorIndicator.className = 'color-indicator';
     let color = '';
-    if (card.color == 'UNGU') {
-        color = 'purple';
+    if (card.color == 'KUNING') {
+        color = 'yellow';
     } else if (card.color == 'MERAH') {
         color = 'red';
     } else if (card.color == 'HIJAU') {
         color = 'green';
     } else {
-        color = 'yellow';
+        color = 'blue';
     }
 
     colorIndicator.style.backgroundColor = color;
